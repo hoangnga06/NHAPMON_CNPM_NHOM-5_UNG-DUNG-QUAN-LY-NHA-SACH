@@ -79,7 +79,22 @@ def login_user():
 # 3) ĐĂNG XUẤT (THAY THẾ CHO ĐỔI MẬT KHẨU)
 # ===========================
 def logout_user():
-    pass
+    print("\n=== ĐĂNG XUẤT HỆ THỐNG ===")
+
+    if not session["logged_in"]:
+        print("❌ Bạn chưa đăng nhập.")
+        return
+
+    print("✔ Nhấn nút 'Đăng xuất' → Xử lý...")
+
+    session["logged_in"] = False
+    session["email"] = None
+
+    print("✔ Phiên đăng nhập đã được hủy.")
+    print("➡ Chuyển về trang Đăng nhập.")
+
+    # Kiểm tra quyền sau đăng xuất
+    print("⚠ Nếu truy cập chức năng yêu cầu đăng nhập → sẽ bị chặn.")
 
 # ===========================
 # 4) GÁN QUYỀN NGƯỜI DÙNG + XEM DANH SÁCH
