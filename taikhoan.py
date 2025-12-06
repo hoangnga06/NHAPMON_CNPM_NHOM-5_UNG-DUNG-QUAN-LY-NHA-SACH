@@ -120,6 +120,29 @@ def manage_roles():
 
     print("❌ Không tìm thấy người dùng.")
 # ===========================
+# 5) ĐỔI MẬT KHẨU
+# ===========================
+def change_password():
+    print("\n=== ĐỔI MẬT KHẨU ===")
+    
+    if not session["logged_in"]:
+        print("❌ Bạn phải đăng nhập trước.")
+        return
+
+    email = session["email"]
+
+    old_pass = input("Nhập mật khẩu cũ: ")
+    new_pass = input("Nhập mật khẩu mới: ")
+
+    for u in users:
+        if u["email"] == email:
+            if u["password"] == old_pass:
+                u["password"] = new_pass
+                print("✔ Đổi mật khẩu thành công.")
+                return
+            else:
+                print("❌ Mật khẩu cũ không đúng.")
+                return
 # MENU CHÍNH
 # ===========================
 def main():
@@ -129,7 +152,8 @@ def main():
         print("2. Đăng nhập")
         print("3. Đăng xuất")
         print("4. Quản lý quyền người dùng")
-        print("5. Thoát")
+        print("5. Đổi mật khẩu")
+        print("6. Thoát")
 
         choice = input("Chọn chức năng: ")
 
@@ -142,8 +166,11 @@ def main():
         elif choice == "4":
             manage_roles()
         elif choice == "5":
+            change_password()
+        elif choice == "6":
             print("Kết thúc chương trình.")
-            break
+            break   
+            
         else:
             print("❌ Lựa chọn không hợp lệ.")
 
