@@ -31,7 +31,48 @@ def register_user():
 # 2) ĐĂNG NHẬP HT
 # ===========================
 def login_user():
-    pass
+    print("\n=== MÀN HÌNH ĐĂNG NHẬP ===")
+    print("(Email, Mật khẩu, Nút 'Đăng nhập')")
+
+    email = input("Email: ")
+    password = input("Mật khẩu: ")
+
+    ## Tìm user trong database
+    for u in users:
+        if u["email"] == email:
+
+            # Nếu tài khoản đang khóa
+            if u["locked"]:
+                print("❌ Tài khoản đã bị khóa do nhập sai quá nhiều.")
+                return
+
+            # Kiểm tra đúng mật khẩu
+            if u["password"] == password:
+                session["logged_in"] = True
+                session["email"] = email
+
+                u["login_fail"] = 0  # reset số lần sai
+
+                print("✔ Đăng nhập thành công!")
+                print("API /auth/login → 200 OK")
+                print(f"➡ Quyền của bạn: {u['role']}")
+
+                # Lưu log đăng nhập
+                print(f"[LOG] {email} đã đăng nhập vào hệ thống.")
+                return
+
+            # Sai mật khẩu => tăng số lần sai
+            else:
+                u["login_fail"] += 1
+                print("❌ Sai mật khẩu.")
+
+                # Sai 3 lần → khóa
+                if u["login_fail"] >= 3:
+                    u["locked"] = True
+                    print("⚠ Tài khoản đã bị khóa sau 3 lần đăng nhập sai.")
+                return
+
+    print("❌ Không tìm thấy tài khoản.")
 
 
 # ===========================
