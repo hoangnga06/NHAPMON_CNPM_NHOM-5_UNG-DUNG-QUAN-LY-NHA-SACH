@@ -100,7 +100,25 @@ def logout_user():
 # 4) GÁN QUYỀN NGƯỜI DÙNG + XEM DANH SÁCH
 # ===========================
 def manage_roles():
-    pass
+    print("\n=== QUẢN LÝ QUYỀN NGƯỜI DÙNG ===")
+
+    print("\n--- DANH SÁCH NGƯỜI DÙNG ---")
+    for u in users:
+        print(f"{u['email']} - Quyền: {u['role']} - Khóa: {u['locked']}")
+    if not users:
+        print("Chưa có người dùng.")
+
+    print("\n--- GÁN QUYỀN ---")
+    email = input("Nhập email người muốn đổi quyền: ")
+    role = input("Quyền mới (admin / user): ")
+
+    for u in users:
+        if u["email"] == email:
+            u["role"] = role
+            print("✔ Gán quyền thành công.")
+            return
+
+    print("❌ Không tìm thấy người dùng.")
 # ===========================
 # MENU CHÍNH
 # ===========================
