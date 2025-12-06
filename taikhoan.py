@@ -9,7 +9,24 @@ session = {"logged_in": False, "email": None}  ## Giả lập phiên đăng nh�
 # 1) ĐĂNG KÝ TÀI KHOẢN (FORM + API)
 # ===========================
 def register_user():
-    pass
+
+    print("\n=== FORM ĐĂNG KÝ TÀI KHOẢN ===")
+    email = input("Nhập email: ")
+    password = input("Nhập mật khẩu: ")
+
+    ## ---- API ĐĂNG KÝ GIẢ LẬP ----
+    new_user = {
+        "email": email,
+        "password": password,
+        "role": "user",
+        "locked": False,
+        "login_fail": 0
+    }
+
+    users.append(new_user)  ## Lưu vào database (tạm)
+    print("✔ API /auth/register → Đăng ký thành công.")
+    
+
 # ===========================
 # 2) ĐĂNG NHẬP HT
 # ===========================
