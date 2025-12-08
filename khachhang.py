@@ -54,7 +54,48 @@ def add_customer():
 #    CHỈNH SỬA KHÁCH HÀNG
 # ==========================
 def edit_customer():
-    pass
+    print("\n=== CHỈNH SỬA KHÁCH ===")
+    cid = input("Nhập ID khách: ")
+
+    if not cid.isdigit():
+        print("⚠ ID không hợp lệ!")
+        return
+
+    conn = connect_db()
+    c = conn.cursor()
+    c.execute("SELECT * FROM customers WHERE id=?", (cid,))
+    customer = c.fetchone()
+
+    if not customer:
+        print("⚠ Không tìm thấy khách")
+        conn.close()
+        return
+
+    print(f"Tên hiện tại: {customer[1]}")
+    print(f"SĐT hiện tại: {customer[2]}")
+    print(f"Địa chỉ hiện tại: {customer[3]}")
+
+    new_name = input("Tên mới (Enter bỏ qua): ") or customer[1]
+    new_phone = input("SĐT mới: ") or customer[2]
+    new_address = input("Địa chỉ mới: ") or customer[3]
+
+    # kiểm tra trùng SĐT
+    c.execute("SELECT id FROM customers WHERE phone=? AND id!=?", (new_phone, cid))
+    if c.fetchone():
+        print("⚠ SĐT đã được sử dụng bởi khách khác!")
+        conn.close()
+        return
+
+    c.execute("""
+        UPDATE customers
+        SET name=?, phone=?, address=?
+        WHERE id=?
+    """, (new_name, new_phone, new_address, cid))
+
+    conn.commit()
+    conn.close()
+    print("✔ Cập nhật khách hàng thành công!")
+
 # ==========================
 #   XEM DANH SÁCH KHÁCH HÀNG
 # ==========================
