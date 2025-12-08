@@ -50,7 +50,7 @@ def add_new_book():
     print("Thêm sách thành công!")
 
 # ============================================
-# 2) CHỈNH SỬA THÔNGT SÁCH — edit_book()
+# 2) CHỈNH SỬA TT SÁCH — edit_book()
 # ============================================
 def edit_book():
     """
