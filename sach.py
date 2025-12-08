@@ -12,7 +12,7 @@ def add_new_book():
     pass
 
 # ============================================
-# 2) CHỈNH SỬA THÔNG TIN SÁCH — edit_book()
+# 2) CHỈNH SỬA TT SÁCH — edit_book()
 # ============================================
 def edit_book():
     pass
