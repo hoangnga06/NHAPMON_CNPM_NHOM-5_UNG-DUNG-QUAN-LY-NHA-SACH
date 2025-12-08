@@ -161,7 +161,32 @@ def view_books(show_pause=True):
 # 5) TÌM KIẾM SÁCH — search_book()
 # ============================================
 def search_book():
-    pass 
+    """
+    - Tìm kiếm theo mã / tên / tác giả
+    - Hiển thị dạng bảng
+    """
+    print("\n=== TÌM KIẾM SÁCH ===")
+    keyword = input("Nhập từ khóa: ").lower()
+
+    results = {}
+
+    for book_id, b in books.items():
+        if (keyword in book_id.lower()
+                or keyword in b['name'].lower()
+                or keyword in b['author'].lower()):
+            results[book_id] = b
+
+    if len(results) == 0:
+        print("❌ Ko tìm thấy sách.")
+        return
+
+    print("\n--- KẾT QUẢ TÌM KIẾM ---")
+    for book_id, b in results.items():
+        print(f"{book_id} | {b['name']} | {b['author']} | {b['category']} | "
+              f"Giá: {b['price']} | SL: {b['qty']}")
+
+    input("\nNhấn Enter để quay lại menu...")
+
 
 # ============================================
 # MENU CHÍNH — main()
