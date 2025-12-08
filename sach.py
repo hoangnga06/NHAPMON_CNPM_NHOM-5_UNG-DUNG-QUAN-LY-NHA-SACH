@@ -9,7 +9,45 @@ books = {}
 # 1) THÊM SÁCH MỚI  — add_new_book()
 # ============================================
 def add_new_book():
-    pass
+    """
+    Chức năng:
+    - Thiết kế form nhập thông tin
+    - API thêm sách (giả lập)
+    - Kiểm tra trùng mã
+    - Lưu vào hệ thống
+    """
+    print("\n=== THÊM SÁCH MỚI ===")
+
+    book_id = input("Nhập mã sách: ")
+    if book_id in books:
+        print("❌ Mã sách đã tồn tại!")
+        return
+
+    name = input("Tên sách: ")
+    author = input("Tác giả: ")
+    category = input("Thể loại: ")
+
+    try:
+        price = float(input("Giá: "))
+        qty = int(input("Số lượng: "))
+    except:
+        print("Giá hoặc số lượng không hợp lệ!")
+        return
+
+    if price <= 0 or qty < 0:
+        print("Giá phải > 0 và số lượng ≥ 0!")
+        return
+
+    # Lưu vào database
+    books[book_id] = {
+        "name": name,
+        "author": author,
+        "category": category,
+        "price": price,
+        "qty": qty
+    }
+
+    print("Thêm sách thành công!")
 
 # ============================================
 # 2) CHỈNH SỬA THÔNGT SÁCH — edit_book()
