@@ -105,7 +105,33 @@ def edit_book():
 # 3) XÓA SÁCH — delete_book()
 # ============================================
 def delete_book():
-    pass
+    """
+    - Hiển thị danh sách
+    - Phân trang đơn giản
+    - Xóa theo mã
+    - Xử lý lỗi
+    """
+    print("\n=== XÓA SÁCH ===")
+
+    if len(books) == 0:
+        print("❌ Kho sách trống.")
+        return
+
+    view_books(show_pause=False)
+
+    book_id = input("Nhập mã sách muốn xóa: ")
+
+    if book_id not in books:
+        print("❌ Không tìm thấy mã sách!")
+        return
+
+    confirm = input("Bạn chắc chắn muốn xóa? (y/n): ")
+    if confirm.lower() == "y":
+        del books[book_id]
+        print("✅ Đã xóa sách thành công!")
+    else:
+        print("❌ Hủy xóa.")
+
 
 # ============================================
 # 4) XEM DANH SÁCH SÁCH — view_books()
