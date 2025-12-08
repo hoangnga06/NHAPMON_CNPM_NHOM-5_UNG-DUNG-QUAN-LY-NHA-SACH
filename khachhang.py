@@ -100,7 +100,23 @@ def edit_customer():
 #   XEM DANH SÁCH KHÁCH HÀNG
 # ==========================
 def view_customers():
-    pass
+    print("\n=== DANH SÁCH KHÁCH ===")
+
+    conn = connect_db()
+    c = conn.cursor()
+    c.execute("SELECT * FROM customers ORDER BY id DESC")
+    data = c.fetchall()
+    conn.close()
+
+    if not data:
+        print("⚠ Chưa có khách hàng!")
+        return
+
+    print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
+    print("-" * 65)
+    for row in data:
+        print("{:<5} {:<20} {:<15} {:<30}".format(row[0], row[1], row[2], row[3]))
+
 # ==========================
 #     TÌM KIẾM KHÁCH
 # ==========================
