@@ -9,26 +9,140 @@ session = {"logged_in": False, "email": None}  ## Giả lập phiên đăng nh�
 # 1) ĐĂNG KÝ TÀI KHOẢN (FORM + API)
 # ===========================
 def register_user():
-    pass
+
+    print("\n=== FORM ĐĂNG KÝ TÀI KHOẢN ===")
+    email = input("Nhập email: ")
+    password = input("Nhập mật khẩu: ")
+
+    ## ---- API ĐĂNG KÝ GIẢ LẬP ----
+    new_user = {
+        "email": email,
+        "password": password,
+        "role": "user",
+        "locked": False,
+        "login_fail": 0
+    }
+
+    users.append(new_user)  ## Lưu vào database (tạm)
+    print("✔ API /auth/register → Đăng ký thành công.")
+    
+
 # ===========================
 # 2) ĐĂNG NHẬP HT
 # ===========================
 def login_user():
-    pass
+    print("\n=== MÀN HÌNH ĐĂNG NHẬP ===")
+    print("(Email, Mật khẩu, Nút 'Đăng nhập')")
+
+    email = input("Email: ")
+    password = input("Mật khẩu: ")
+
+    ## Tìm user trong database
+    for u in users:
+        if u["email"] == email:
+
+            # Nếu tài khoản đang khóa
+            if u["locked"]:
+                print("❌ Tài khoản đã bị khóa do nhập sai quá nhiều.")
+                return
+
+            # Kiểm tra đúng mật khẩu
+            if u["password"] == password:
+                session["logged_in"] = True
+                session["email"] = email
+
+                u["login_fail"] = 0  # reset số lần sai
+
+                print("✔ Đăng nhập thành công!")
+                print("API /auth/login → 200 OK")
+                print(f"➡ Quyền của bạn: {u['role']}")
+
+                # Lưu log đăng nhập
+                print(f"[LOG] {email} đã đăng nhập vào hệ thống.")
+                return
+
+            # Sai mật khẩu => tăng số lần sai
+            else:
+                u["login_fail"] += 1
+                print("❌ Sai mật khẩu.")
+
+                # Sai 3 lần → khóa
+                if u["login_fail"] >= 3:
+                    u["locked"] = True
+                    print("⚠ Tài khoản đã bị khóa sau 3 lần đăng nhập sai.")
+                return
+
+    print("❌ Không tìm thấy tài khoản.")
 
 
 # ===========================
 # 3) ĐĂNG XUẤT (THAY THẾ CHO ĐỔI MẬT KHẨU)
 # ===========================
 def logout_user():
-    pass
+    print("\n=== ĐĂNG XUẤT HỆ THỐNG ===")
+
+    if not session["logged_in"]:
+        print("❌ Bạn chưa đăng nhập.")
+        return
+
+    print("✔ Nhấn nút 'Đăng xuất' → Xử lý...")
+
+    session["logged_in"] = False
+    session["email"] = None
+
+    print("✔ Phiên đăng nhập đã được hủy.")
+    print("➡ Chuyển về trang Đăng nhập.")
+
+    # Kiểm tra quyền sau đăng xuất
+    print("⚠ Nếu truy cập chức năng yêu cầu đăng nhập → sẽ bị chặn.")
 
 # ===========================
 # 4) GÁN QUYỀN NGƯỜI DÙNG + XEM DANH SÁCH
 # ===========================
 def manage_roles():
-    pass
+    print("\n=== QUẢN LÝ QUYỀN NGƯỜI DÙNG ===")
+
+    print("\n--- DANH SÁCH NGƯỜI DÙNG ---")
+    for u in users:
+        print(f"{u['email']} - Quyền: {u['role']} - Khóa: {u['locked']}")
+    if not users:
+        print("Chưa có người dùng.")
+
+    print("\n--- GÁN QUYỀN ---")
+    email = input("Nhập email người muốn đổi quyền: ")
+    role = input("Quyền mới (admin / user): ")
+
+    for u in users:
+        if u["email"] == email:
+            u["role"] = role
+            print("✔ Gán quyền thành công.")
+            return
+
+    print("❌ Không tìm thấy người dùng.")
 # ===========================
+# 5) ĐỔI MẬT KHẨU
+# ===========================
+def change_password():
+    print("\n=== ĐỔI MẬT KHẨU ===")
+    
+    if not session["logged_in"]:
+        print("❌ Bạn phải đăng nhập trước.")
+        return
+
+    email = session["email"]
+
+    old_pass = input("Nhập mật khẩu cũ: ")
+    new_pass = input("Nhập mật khẩu mới: ")
+
+    for u in users:
+        if u["email"] == email:
+            if u["password"] == old_pass:
+                u["password"] = new_pass
+                print("✔ Đổi mật khẩu thành công.")
+                return
+            else:
+                print("❌ Mật khẩu cũ không đúng.")
+                return
 # MENU CHÍNH
 # ===========================
 def main():
@@ -38,7 +152,8 @@ def main():
         print("2. Đăng nhập")
         print("3. Đăng xuất")
         print("4. Quản lý quyền người dùng")
-        print("5. Thoát")
+        print("5. Đổi mật khẩu")
+        print("6. Thoát")
 
         choice = input("Chọn chức năng: ")
 
@@ -51,8 +166,11 @@ def main():
         elif choice == "4":
             manage_roles()
         elif choice == "5":
+            change_password()
+        elif choice == "6":
             print("Kết thúc chương trình.")
-            break
+            break   
+            
         else:
             print("❌ Lựa chọn không hợp lệ.")
 
