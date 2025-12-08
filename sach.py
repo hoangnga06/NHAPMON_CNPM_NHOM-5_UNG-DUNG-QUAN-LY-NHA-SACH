@@ -177,7 +177,7 @@ def search_book():
             results[book_id] = b
 
     if len(results) == 0:
-        print("❌ Không tìm thấy sách.")
+        print("❌ Ko tìm thấy sách.")
         return
 
     print("\n--- KẾT QUẢ TÌM KIẾM ---")
