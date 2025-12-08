@@ -7,14 +7,48 @@ def connect_db():
     return sqlite3.connect("bookstore.db")
 
 def create_table():
-    pass
+    conn = connect_db()
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS customers(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT UNIQUE NOT NULL,
+            address TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
 
 
 # ==========================
 #     THÊM KH
 # ==========================
 def add_customer():
-    pass
+    print("\n=== THÊM KHÁCH HÀNG ===")
+    name = input("Tên: ").strip()
+    phone = input("SĐT: ").strip()
+    address = input("Địa chỉ: ").strip()
+
+    if not name or not phone:
+        print("⚠ Không được để trống tên hoặc SĐT")
+        return
+
+    conn = connect_db()
+    c = conn.cursor()
+
+    # kiểm tra trùng SĐT
+    c.execute("SELECT * FROM customers WHERE phone=?", (phone,))
+    if c.fetchone():
+        print("⚠ SĐT đã tồn tại!")
+        conn.close()
+        return
+
+    c.execute("INSERT INTO customers(name, phone, address) VALUES (?, ?, ?)",
+              (name, phone, address))
+    conn.commit()
+    conn.close()
+    print("✔ Thêm khách hàng thành công!")
 
 # ==========================
 #    CHỈNH SỬA KHÁCH HÀNG
