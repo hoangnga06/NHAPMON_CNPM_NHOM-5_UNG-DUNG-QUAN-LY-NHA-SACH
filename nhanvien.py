@@ -67,8 +67,17 @@ def delete_employee(emp_id):
 # XEM DANH SÁCH NHÂN VIÊN + TÌM KIẾM
 # ==============================
 def view_employees(search=""):
-    pass
+    result = []
+    search = search.lower()
 
+    for emp in employees:
+        if (search in emp["name"].lower()) or (search in emp["email"].lower()) or (search in emp["phone"]):
+            result.append(emp)
+
+    if not result:
+        return "❗ Không có dữ liệu nhân viên!"
+
+    return result
 
 # ==============================
 # MAIN CHẠY CHƯƠNG TRÌNH
