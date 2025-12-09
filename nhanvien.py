@@ -28,7 +28,26 @@ def add_employee(name, email, phone, role):
 # CHỈNH SỬA NHÂN VIÊN
 # ==============================
 def update_employee(emp_id, name=None, email=None, phone=None, role=None):
-    pass
+
+    # tìm nhân viên
+    for emp in employees:
+        if emp["id"] == emp_id:
+
+            # validate đơn giản
+            if phone:
+                for e in employees:
+                    if e["phone"] == phone and e["id"] != emp_id:
+                        return "❌ Số điện thoại đã tồn tại!"
+
+            # cập nhật thông tin
+            if name: emp["name"] = name
+            if email: emp["email"] = email
+            if phone: emp["phone"] = phone
+            if role: emp["role"] = role
+
+            return "✔ Cập nhật thành công!"
+
+    return "❌ Không tìm thấy nhân viên!"
 
 # ==============================
 # XOÁ NHÂN VIÊN
