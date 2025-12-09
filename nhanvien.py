@@ -53,7 +53,16 @@ def update_employee(emp_id, name=None, email=None, phone=None, role=None):
 # XOÁ NHÂN VIÊN
 # ==============================
 def delete_employee(emp_id):
-    pass
+    for emp in employees:
+        if emp["id"] == emp_id:
+
+            if emp["role"] == "admin":
+                return "Không được xoá admin chính!"
+
+            employees.remove(emp)
+            return "✔ Đã xoá nhân viên!"
+
+    return "Không tìm thấy nhân viên!"
 # ==============================
 # XEM DANH SÁCH NHÂN VIÊN + TÌM KIẾM
 # ==============================
