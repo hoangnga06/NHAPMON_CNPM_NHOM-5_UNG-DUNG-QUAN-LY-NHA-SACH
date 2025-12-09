@@ -121,7 +121,26 @@ def view_customers():
 #     TÌM KIẾM KHÁCH
 # ==========================
 def search_customer():
-    pass
+    print("\n=== TÌM KIẾM KHÁCH ===")
+    key = input("Nhập tên hoặc SĐT: ")
+
+    conn = connect_db()
+    c = conn.cursor()
+    c.execute("""
+        SELECT * FROM customers
+        WHERE name LIKE ? OR phone LIKE ?
+    """, (f"%{key}%", f"%{key}%"))
+    data = c.fetchall()
+    conn.close()
+
+    if not data:
+        print("⚠ Không tìm thấy khách phù hợp!")
+        return
+
+    print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
+    print("-" * 65)
+    for row in data:
+        print("{:<5} {:<20} {:<15} {:<30}".format(row[0], row[1], row[2], row[3]))
 
 # ==========================
 #           MAIN
