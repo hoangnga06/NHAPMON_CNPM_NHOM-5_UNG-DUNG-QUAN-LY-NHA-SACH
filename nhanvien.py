@@ -12,7 +12,17 @@ employees = [
 # THÊM NHÂN VIÊN
 # ==============================
 def add_employee(name, email, phone, role):
-    pass
+    # Kiểm tra trùng SĐT
+    for emp in employees:
+        if emp["phone"] == phone:
+            return "❌ Số điện thoại đã tồn tại!"
+
+    new_id = employees[-1]["id"] + 1 if employees else 1
+    new_emp = {"id": new_id, "name": name, "email": email, "phone": phone, "role": role}
+    employees.append(new_emp)
+
+    return "✔ Thêm nhân viên thành công!"
+
 
 # ==============================
 # CHỈNH SỬA NHÂN VIÊN
