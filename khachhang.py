@@ -58,7 +58,39 @@ def add_customer():
 # SỬA KHÁCH
 # ==========================
 def edit_customer():
-    pass
+    global customers
+    print("\n=== CHỈNH SỬA KHÁCH ===")
+
+    cid = input("Nhập ID khách: ").strip()
+
+    if cid not in customers:
+        print("❌ Không tìm thấy khách!")
+        return
+
+    c = customers[cid]
+
+    print(f"Tên hiện tại: {c['name']}")
+    print(f"SĐT hiện tại: {c['phone']}")
+    print(f"Địa chỉ hiện tại: {c['address']}")
+
+    new_name = input("Tên mới (Enter bỏ qua): ") or c["name"]
+    new_phone = input("SĐT mới (Enter bỏ qua): ") or c["phone"]
+    new_address = input("Địa chỉ mới (Enter bỏ qua): ") or c["address"]
+
+    # kiểm tra trùng SĐT
+    for k, v in customers.items():
+        if k != cid and v["phone"] == new_phone:
+            print("❌ SĐT đã được dùng bởi khách khác!")
+            return
+
+    customers[cid] = {
+        "name": new_name,
+        "phone": new_phone,
+        "address": new_address
+    }
+
+    save_customers(customers)
+    print("✅ Cập nhật thành công!")
 
 
 # ==========================
