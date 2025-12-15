@@ -24,7 +24,35 @@ customers = load_customers()
 # THÊM KHÁCH
 # ==========================
 def add_customer():
-    pass
+    global customers
+    print("\n=== THÊM KHÁCH HÀNG ===")
+
+    name = input("Tên: ").strip()
+    phone = input("SĐT: ").strip()
+    address = input("Địa chỉ: ").strip()
+
+    if not name or not phone or not address:
+       print("❌ Không được để trống tên, SĐT hoặc địa chỉ")
+       return
+
+
+    # kiểm tra trùng SĐT
+    for c in customers.values():
+        if c["phone"] == phone:
+            print("❌ SĐT đã tồn tại!")
+            return
+
+    cid = str(len(customers) + 1)
+
+    customers[cid] = {
+        "name": name,
+        "phone": phone,
+        "address": address
+    }
+
+    save_customers(customers)
+    print("✅ Thêm khách hàng thành công!")
+
 
 # ==========================
 # SỬA KHÁCH
