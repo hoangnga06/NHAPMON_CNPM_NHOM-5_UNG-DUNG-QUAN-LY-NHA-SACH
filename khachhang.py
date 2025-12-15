@@ -64,7 +64,7 @@ def edit_customer():
     cid = input("Nhập ID khách: ").strip()
 
     if cid not in customers:
-        print("❌ Không tìm thấy khách!")
+        print(" Không tìm thấy khách!")
         return
 
     c = customers[cid]
@@ -80,7 +80,7 @@ def edit_customer():
     # kiểm tra trùng SĐT
     for k, v in customers.items():
         if k != cid and v["phone"] == new_phone:
-            print("❌ SĐT đã được dùng bởi khách khác!")
+            print(" SĐT đã được dùng bởi khách khác!")
             return
 
     customers[cid] = {
@@ -94,11 +94,23 @@ def edit_customer():
 
 
 # ==========================
-# XEM DS KHÁCH
+# XEM Danh Sach KHÁCH
 # ==========================
 def view_customers():
-    pass
+    
+    print("\n=== DANH SÁCH KHÁCH HÀNG ===")
 
+    if not customers:
+        print(" Chưa có khách hàng.")
+        return
+
+    print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
+    print("-" * 70)
+
+    for cid, c in customers.items():
+        print("{:<5} {:<20} {:<15} {:<30}".format(
+            cid, c["name"], c["phone"], c["address"]
+        ))
 # ==========================
 # TÌM KIẾM
 # ==========================
