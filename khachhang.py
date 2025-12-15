@@ -101,7 +101,7 @@ def view_customers():
     print("\n=== DANH SÁCH KHÁCH HÀNG ===")
 
     if not customers:
-        print("❌ Chưa có khách hàng.")
+        print(" Chưa có khách hàng.")
         return
 
     print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
