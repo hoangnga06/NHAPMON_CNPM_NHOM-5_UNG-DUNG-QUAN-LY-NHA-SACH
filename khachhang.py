@@ -80,7 +80,7 @@ def edit_customer():
     # kiểm tra trùng SĐT
     for k, v in customers.items():
         if k != cid and v["phone"] == new_phone:
-            print("❌ SĐT đã được dùng bởi khách khác!")
+            print(" SĐT đã được dùng bởi khách khác!")
             return
 
     customers[cid] = {
