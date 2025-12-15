@@ -64,7 +64,7 @@ def edit_customer():
     cid = input("Nhập ID khách: ").strip()
 
     if cid not in customers:
-        print("❌ Không tìm thấy khách!")
+        print(" Không tìm thấy khách!")
         return
 
     c = customers[cid]
