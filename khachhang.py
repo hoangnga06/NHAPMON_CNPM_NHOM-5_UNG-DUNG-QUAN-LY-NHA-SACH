@@ -94,7 +94,7 @@ def edit_customer():
 
 
 # ==========================
-# XEM DS KHÁCH
+# XEM Danh Sach KHÁCH
 # ==========================
 def view_customers():
     
