@@ -1,153 +1,145 @@
-import sqlite3
+import json
+import os
+
+CUSTOMER_FILE = "customers.json"
 
 # ==========================
-#   KẾT NỐI + TẠO BẢNG
+# LOAD / SAVE
 # ==========================
-def connect_db():
-    return sqlite3.connect("bookstore.db")
+def load_customers():
+    if not os.path.exists(CUSTOMER_FILE):
+        return {}
+    with open(CUSTOMER_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-def create_table():
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS customers(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
-            address TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
+def save_customers(customers):
+    with open(CUSTOMER_FILE, "w", encoding="utf-8") as f:
+        json.dump(customers, f, indent=4, ensure_ascii=False)
+
+
+customers = load_customers()
 
 
 # ==========================
-#     THÊM KH
+# THÊM KHÁCH
 # ==========================
 def add_customer():
+    global customers
     print("\n=== THÊM KHÁCH HÀNG ===")
+
     name = input("Tên: ").strip()
     phone = input("SĐT: ").strip()
     address = input("Địa chỉ: ").strip()
 
-    if not name or not phone:
-        print("⚠ Không được để trống tên hoặc SĐT")
-        return
+    if not name or not phone or not address:
+       print("❌ Không được để trống tên, SĐT hoặc địa chỉ")
+       return
 
-    conn = connect_db()
-    c = conn.cursor()
 
     # kiểm tra trùng SĐT
-    c.execute("SELECT * FROM customers WHERE phone=?", (phone,))
-    if c.fetchone():
-        print("⚠ SĐT đã tồn tại!")
-        conn.close()
-        return
+    for c in customers.values():
+        if c["phone"] == phone:
+            print("❌ SĐT đã tồn tại!")
+            return
 
-    c.execute("INSERT INTO customers(name, phone, address) VALUES (?, ?, ?)",
-              (name, phone, address))
-    conn.commit()
-    conn.close()
-    print("✔ Thêm khách hàng thành công!")
+    cid = str(len(customers) + 1)
+
+    customers[cid] = {
+        "name": name,
+        "phone": phone,
+        "address": address
+    }
+
+    save_customers(customers)
+    print("✅ Thêm khách hàng thành công!")
+
 
 # ==========================
-#    CHỈNH SỬA KHÁCH HÀNG
+# SỬA KHÁCH
 # ==========================
 def edit_customer():
+    global customers
     print("\n=== CHỈNH SỬA KHÁCH ===")
-    cid = input("Nhập ID khách: ")
 
-    if not cid.isdigit():
-        print("⚠ ID không hợp lệ!")
+    cid = input("Nhập ID khách: ").strip()
+
+    if cid not in customers:
+        print("❌ Không tìm thấy khách!")
         return
 
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("SELECT * FROM customers WHERE id=?", (cid,))
-    customer = c.fetchone()
+    c = customers[cid]
 
-    if not customer:
-        print("⚠ Không tìm thấy khách")
-        conn.close()
-        return
+    print(f"Tên hiện tại: {c['name']}")
+    print(f"SĐT hiện tại: {c['phone']}")
+    print(f"Địa chỉ hiện tại: {c['address']}")
 
-    print(f"Tên hiện tại: {customer[1]}")
-    print(f"SĐT hiện tại: {customer[2]}")
-    print(f"Địa chỉ hiện tại: {customer[3]}")
-
-    new_name = input("Tên mới (Enter bỏ qua): ") or customer[1]
-    new_phone = input("SĐT mới: ") or customer[2]
-    new_address = input("Địa chỉ mới: ") or customer[3]
+    new_name = input("Tên mới (Enter bỏ qua): ") or c["name"]
+    new_phone = input("SĐT mới (Enter bỏ qua): ") or c["phone"]
+    new_address = input("Địa chỉ mới (Enter bỏ qua): ") or c["address"]
 
     # kiểm tra trùng SĐT
-    c.execute("SELECT id FROM customers WHERE phone=? AND id!=?", (new_phone, cid))
-    if c.fetchone():
-        print("⚠ SĐT đã được sử dụng bởi khách khác!")
-        conn.close()
-        return
+    for k, v in customers.items():
+        if k != cid and v["phone"] == new_phone:
+            print("❌ SĐT đã được dùng bởi khách khác!")
+            return
 
-    c.execute("""
-        UPDATE customers
-        SET name=?, phone=?, address=?
-        WHERE id=?
-    """, (new_name, new_phone, new_address, cid))
+    customers[cid] = {
+        "name": new_name,
+        "phone": new_phone,
+        "address": new_address
+    }
 
-    conn.commit()
-    conn.close()
-    print("✔ Cập nhật khách hàng thành công!")
+    save_customers(customers)
+    print("✅ Cập nhật thành công!")
+
 
 # ==========================
-#   XEM DANH SÁCH KHÁCH HÀNG
+# XEM DS KHÁCH
 # ==========================
 def view_customers():
-    print("\n=== DANH SÁCH KHÁCH ===")
+    
+    print("\n=== DANH SÁCH KHÁCH HÀNG ===")
 
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("SELECT * FROM customers ORDER BY id DESC")
-    data = c.fetchall()
-    conn.close()
-
-    if not data:
-        print("⚠ Chưa có khách hàng!")
+    if not customers:
+        print("❌ Chưa có khách hàng.")
         return
 
     print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
-    print("-" * 65)
-    for row in data:
-        print("{:<5} {:<20} {:<15} {:<30}".format(row[0], row[1], row[2], row[3]))
+    print("-" * 70)
 
+    for cid, c in customers.items():
+        print("{:<5} {:<20} {:<15} {:<30}".format(
+            cid, c["name"], c["phone"], c["address"]
+        ))
 # ==========================
-#     TÌM KIẾM KHÁCH
+# TÌM KIẾM
 # ==========================
 def search_customer():
     pass
 
 # ==========================
-#           MAIN
+# MENU KHÁCH HÀNG
 # ==========================
 def main():
-    create_table()
     while True:
         print("\n===== MENU KHÁCH HÀNG =====")
         print("1. Thêm khách hàng")
         print("2. Chỉnh sửa khách hàng")
         print("3. Xem danh sách khách")
         print("4. Tìm kiếm khách hàng")
-        print("0. Thoát")
+        print("0. Quay lại")
 
-        ch = input("Chọn chức năng: ")
+        ch = input("Chọn: ")
 
-        if ch == "1": add_customer()
-        elif ch == "2": edit_customer()
-        elif ch == "3": view_customers()
-        elif ch == "4": search_customer()
+        if ch == "1":
+            add_customer()
+        elif ch == "2":
+            edit_customer()
+        elif ch == "3":
+            view_customers()
+        elif ch == "4":
+            search_customer()
         elif ch == "0":
-            print("Bye 👋")
             break
         else:
-            print(" Lựa chọn không hợp lệ!")
-
-
-if __name__ == "__main__":
-    main()
+            print("❌ Lựa chọn không hợp lệ!")
