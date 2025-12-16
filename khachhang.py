@@ -116,16 +116,22 @@ def view_customers():
 # ==========================
 def search_customer():
     print("\n=== TÌM KIẾM KHÁCH ===")
-    key = input("Nhập tên hoặc SDT: ").lower()
+    key = input("Nhập tên hoặc SĐT: ").lower()
 
     found = False
     for cid, c in customers.items():
         if key in c["name"].lower() or key in c["phone"]:
-            print(f"ID: {cid} | Tên: {c['name']} | SĐT: {c['phone']}")
+            if not found:
+                print("{:<5} {:<20} {:<15} {:<30}".format("ID", "Tên", "SĐT", "Địa chỉ"))
+                print("-" * 70)
             found = True
+            print("{:<5} {:<20} {:<15} {:<30}".format(
+                cid, c["name"], c["phone"], c["address"]
+            ))
 
     if not found:
-        print("Không tìm thấy khách hàng!")
+        print("❌ Không tìm thấy khách phù hợp.")
+    
 # ==========================
 # MENU KHÁCH HÀNG
 # ==========================
