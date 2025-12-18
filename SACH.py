@@ -125,7 +125,29 @@ def delete_book():
 # 4) XEM DANH SÁCH SÁCH — view_books()
 # ============================================
 def view_books(show_pause=True):
-    pass
+    print("\n=== DANH SÁCH SÁCH ===")
+
+    if len(books) == 0:
+        print("❌ Không có dữ liệu.")
+        return
+
+    print("{:<10} {:<25} {:<20} {:<15} {:<10} {:<10}".format(
+        "Mã", "Tên sách", "Tác giả", "Thể loại", "Giá", "SL"
+    ))
+    print("-" * 95)
+
+    for book_id, b in books.items():
+        print("{:<10} {:<25} {:<20} {:<15} {:<10} {:<10}".format(
+            book_id,
+            b["name"],
+            b["author"],
+            b["category"],
+            b["price"],
+            b["qty"]
+        ))
+
+    if show_pause:
+        input("\nNhấn Enter để quay lại menu...")
 
 
 # ============================================
