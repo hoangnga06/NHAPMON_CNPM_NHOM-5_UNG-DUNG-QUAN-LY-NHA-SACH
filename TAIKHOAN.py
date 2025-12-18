@@ -56,10 +56,52 @@ create_default_admin()
 # ĐĂNG KÝ
 # ======================
 def valid_phone(phone):
-    pass
+    return phone.isdigit() and 9 < len(phone) < 11
 
 def register():
-    pass
+    print("\n=== ĐĂNG KÝ ===")
+    fullname = input("Họ tên: ").strip()
+    email = input("Email: ").strip()
+    phone = input("SĐT: ").strip()
+    pw = input("Mật khẩu: ")
+    cf = input("Xác nhận mật khẩu: ")
+
+    if not fullname:
+        print("❌ Họ tên trống.")
+        return
+    if not valid_email(email):
+        print("❌ Email không hợp lệ.")
+        return
+    if not valid_phone(phone):
+        print("❌ SĐT không hợp lệ.")
+        return
+    # Kiểm tra trùng SĐT
+    if any(u["phone"] == phone for u in users):
+        print("❌ SĐT đã được đăng ký.")
+        return
+
+    if not valid_password(pw):
+        print("❌ Mật khẩu ≥ 6 ký tự.")
+        return
+    if pw != cf:
+        print("❌ Mật khẩu xác nhận không khớp.")
+        return
+    # Kiểm tra trùng email
+    if any(u["email"] == email for u in users):
+        print("❌ Email đã tồn tại.")
+        return
+
+    users.append({
+        "fullname": fullname,
+        "email": email,
+        "phone": phone,                  
+        "password": hash_password(pw),
+        "role": "user",
+        "locked": False,
+        "login_fail": 0
+    })
+    save_users(users)
+    print("✔ Đăng ký thành công.")
 # ======================
 # ĐĂNG NHẬP
 # ======================
