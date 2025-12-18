@@ -59,7 +59,44 @@ def add_new_book():
 # 2) CHỈNH SỬA TT SÁCH — edit_book()
 # ============================================
 def edit_book():
-    pass
+    print("\n=== CHỈNH SỬA THÔNG TIN SÁCH ===")
+    book_id = input("Nhập mã sách cần sửa: ")
+    if book_id not in books:
+        print("❌ Không tìm thấy mã sách!")
+        return
+
+    book = books[book_id]
+    print("\n--- DỮ LIỆU HIỆN TẠI ---")
+    print(book)
+    print("\nNhập thông tin mới (Enter để giữ nguyên):")
+    
+    name = input(f"Tên sách ({book['name']}): ") or book['name']
+    author = input(f"Tác giả ({book['author']}): ") or book['author']
+    category = input(f"Thể loại ({book['category']}): ") or book['category']
+
+    try:
+        price_input = input(f"Giá ({book['price']}): ")
+        price = float(price_input) if price_input else book['price']
+        qty_input = input(f"Số lượng ({book['qty']}): ")
+        qty = int(qty_input) if qty_input else book['qty']
+    except:
+        print("❌ Dữ liệu chỉnh sửa không hợp lệ!")
+        return
+
+    if price <= 0 or qty < 0:
+        print("❌ Giá phải > 0 và số lượng ≥ 0!")
+        return
+
+    # Cập nhật dữ liệu
+    books[book_id] = {
+        "name": name,
+        "author": author,
+        "category": category,
+        "price": price,
+        "qty": qty
+    }
+    save_books()
+    print("✅ Cập nhật thành công!")
 
 # ============================================
 # 3) XÓA SÁCH — delete_book()
