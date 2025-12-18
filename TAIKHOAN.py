@@ -2,7 +2,7 @@ import json
 import os
 import re
 import hashlib
-import sach
+import SACH
 import khachhang
 
 
@@ -106,7 +106,31 @@ def register():
 # ĐĂNG NHẬP
 # ======================
 def login():
-    pass
+    print("\n=== ĐĂNG NHẬP ===")
+    email = input("Email: ")
+    pw = input("Mật khẩu: ")
+
+    for u in users:
+        if u["email"] == email:
+            if u["locked"]:
+                print("Tài khoản bị khóa.")
+                return
+            if u["password"] == hash_password(pw):
+                session["logged_in"] = True
+                session["email"] = email
+                u["login_fail"] = 0
+                save_users(users)
+                print("✔ Đăng nhập thành công.")
+                return
+            else:
+                u["login_fail"] += 1
+                print(f"Sai mật khẩu ({u['login_fail']}/3)")
+                if u["login_fail"] >= 3:
+                    u["locked"] = True
+                    print("⚠ Tài khoản đã bị khóa.")
+                save_users(users)
+                return
+    print("Email không tồn tại.")
 
 # ======================
 # ĐỔI MẬT KHẨU
