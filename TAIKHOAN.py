@@ -136,7 +136,36 @@ def login():
 # ĐỔI MẬT KHẨU
 # ======================
 def change_password():
-    pass
+    if not session["logged_in"]:
+        print("❌ Chưa đăng nhập.")
+        return
+
+    old = input("Mật khẩu cũ: ")
+    new = input("Mật khẩu mới: ")
+    cf = input("Xác nhận mật khẩu mới: ")
+
+    for u in users:
+        if u["email"] == session["email"]:
+            # Kiểm tra mật khẩu cũif u["password"] != hash_password(old):
+                print("❌ Mật khẩu cũ sai.")
+                return
+            # Kiểm tra mật khẩu mới khác mật khẩu cũ
+    if hash_password(new) == u["password"]:
+            print("❌ Mật khẩu mới không được trùng mật khẩu cũ.")
+            return
+            # Kiểm tra độ mạnh
+            if not valid_password(new):
+                print("❌ Mật khẩu ≥ 6 ký tự.")
+                return
+            # Xác nhận
+            if new != cf:
+                print("❌ Xác nhận không khớp.")
+                return
+            # Lưu mật khẩu mới
+            u["password"] = hash_password(new)
+            save_users(users)
+            print("✔ Đổi mật khẩu thành công.")
+            return
 
 # ======================
 # ADMIN QLND
@@ -194,7 +223,7 @@ def main():
                 # SÁCH
                 # =========================
                 if ch == "1":
-                   sach.main(user["role"])      # 👈 admin / user tự phân quyền bên sach.py
+                    SACH.main(user["role"])      # 👈 admin / user tự phân quyền bên sach.py
 
                 # =========================
                 # KHÁCH HÀNG
