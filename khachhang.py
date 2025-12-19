@@ -16,6 +16,12 @@ def save_customers(customers):
     with open(CUSTOMER_FILE, "w", encoding="utf-8") as f:
         json.dump(customers, f, indent=4, ensure_ascii=False)
 
+def valid_phone(phone):
+    return (
+        phone.isdigit()
+        and phone.startswith("0")
+        and len(phone) == 10
+    )
 
 customers = load_customers()
 
@@ -33,6 +39,9 @@ def add_customer():
 
     if not name or not phone or not address:
        print("❌ Không được để trống tên, SĐT hoặc địa chỉ")
+       return
+    if not valid_phone(phone):
+       print("❌ SĐT phải bắt đầu bằng 0 và đủ 10 số")
        return
 
 
@@ -74,8 +83,14 @@ def edit_customer():
     print(f"Địa chỉ hiện tại: {c['address']}")
 
     new_name = input("Tên mới (Enter bỏ qua): ") or c["name"]
-    new_phone = input("SĐT mới (Enter bỏ qua): ") or c["phone"]
+    new_phone = input("SĐT mới (Enter bỏ qua): ").strip()
     new_address = input("Địa chỉ mới (Enter bỏ qua): ") or c["address"]
+    if new_phone:
+        if not valid_phone(new_phone):
+            print("❌ SĐT phải bắt đầu bằng 0 và đủ 10 số")
+            return
+    else:
+        new_phone = c["phone"]
 
     # kiểm tra trùng SĐT
     for k, v in customers.items():
