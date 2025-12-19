@@ -171,7 +171,39 @@ def change_password():
 # ADMIN QLND
 # ======================
 def admin_menu():
-    pass
+    while True:
+        print("\n=== ADMIN ===")
+        print("1. Xem users")
+        print("2. Đổi quyền")
+        print("3. Khóa/Mở")
+        print("4. Quay lại")
+
+        c = input("Chọn: ")
+
+        if c == "1":
+            for u in users:
+                print(f"{u['email']} |  {u.get('phone', '---')}| {u['role']} | locked={u['locked']}")
+        elif c == "2":
+            email = input("Email: ")
+            role = input("Role (admin/user): ")
+            for u in users:
+                if u["email"] == email:
+                    u["role"] = role
+                    save_users(users)
+                    print("✔ Đã đổi quyền.")
+                    break
+        elif c == "3":
+            email = input("Email: ")
+            for u in users:
+                if u["email"] == email:
+                    u["locked"] = not u["locked"]
+                    save_users(users)
+                    print("✔ Đã cập nhật.")
+                    break
+        elif c == "4":
+            break
+
+
 
 # ======================
 # MENU
