@@ -3,7 +3,7 @@ import os
 import re
 import hashlib
 import SACH
-import khachhang
+import KHACHHANG
 
 
 DATA_FILE = "users.json"
@@ -261,7 +261,7 @@ def main():
                 # KHÁCH HÀNG
                 # =========================
                 elif ch == "2":
-                   khachhang.main()             # 👈 admin & user đều dùng được
+                   KHACHHANG.main()             # 👈 admin & user đều dùng được
 
                 # =========================
                 # ĐỔI MẬT KHẨU
