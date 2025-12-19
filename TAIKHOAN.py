@@ -76,7 +76,7 @@ def register():
         print("❌ SĐT không hợp lệ.")
         return
     # Kiểm tra trùng SĐT
-    if any(u["phone"] == phone for u in users):
+    if any(u.get("phone") == phone for u in users):
         print("❌ SĐT đã được đăng ký.")
         return
 
