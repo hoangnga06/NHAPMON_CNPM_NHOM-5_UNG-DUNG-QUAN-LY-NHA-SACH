@@ -146,13 +146,14 @@ def change_password():
 
     for u in users:
         if u["email"] == session["email"]:
-            # Kiểm tra mật khẩu cũif u["password"] != hash_password(old):
+            # Kiểm tra mật khẩu cũ
+            if u["password"] != hash_password(old):
                 print("❌ Mật khẩu cũ sai.")
                 return
             # Kiểm tra mật khẩu mới khác mật khẩu cũ
-    if hash_password(new) == u["password"]:
-            print("❌ Mật khẩu mới không được trùng mật khẩu cũ.")
-            return
+            if hash_password(new) == u["password"]:
+                print("❌ Mật khẩu mới không được trùng mật khẩu cũ.")
+                return
             # Kiểm tra độ mạnh
             if not valid_password(new):
                 print("❌ Mật khẩu ≥ 6 ký tự.")
@@ -166,6 +167,7 @@ def change_password():
             save_users(users)
             print("✔ Đổi mật khẩu thành công.")
             return
+
 
 # ======================
 # ADMIN QLND
