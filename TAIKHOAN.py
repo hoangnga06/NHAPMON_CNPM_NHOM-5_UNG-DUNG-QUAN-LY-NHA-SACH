@@ -56,7 +56,11 @@ create_default_admin()
 # ĐĂNG KÝ
 # ======================
 def valid_phone(phone):
-    return phone.isdigit() and 9 < len(phone) < 11
+    return (
+        phone.isdigit()
+        and phone.startswith("0")
+        and len(phone) == 10
+    )
 
 def register():
     print("\n=== ĐĂNG KÝ ===")
@@ -174,6 +178,7 @@ def change_password():
 # ======================
 def admin_menu():
     while True:
+        users = load_users()
         print("\n=== ADMIN ===")
         print("1. Xem users")
         print("2. Đổi quyền")
@@ -188,20 +193,29 @@ def admin_menu():
         elif c == "2":
             email = input("Email: ")
             role = input("Role (admin/user): ")
+            found = False
             for u in users:
                 if u["email"] == email:
                     u["role"] = role
                     save_users(users)
                     print("✔ Đã đổi quyền.")
+                    found  = True
                     break
+            if not found:
+                print("❌ Tài khoản không tồn tại")
+
         elif c == "3":
             email = input("Email: ")
+            found = False
             for u in users:
                 if u["email"] == email:
                     u["locked"] = not u["locked"]
                     save_users(users)
                     print("✔ Đã cập nhật.")
+                    found = True
                     break
+            if not found:
+                print("❌ Không tìm thấy tài khoản")
         elif c == "4":
             break
 
@@ -238,7 +252,13 @@ def main():
         # ĐÃ ĐĂNG NHẬP
         # =========================
         else:
-            user = next(u for u in users if u["email"] == session["email"])
+            users = load_users()
+            user = next((u for u in users if u["email"] == session["email"]), None)
+            if not user:
+               print("❌ Tài khoản không tồn tại.")
+               session["logged_in"] = False
+               break
+           
             while True:
                 print(f"\n=== MENU ({user['role'].upper()}) ===")
                 print("1. Quản lý sách")
