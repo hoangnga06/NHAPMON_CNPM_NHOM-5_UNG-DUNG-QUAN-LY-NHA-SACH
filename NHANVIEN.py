@@ -46,7 +46,17 @@ def update_info():
 # XOÁ NHÂN VIÊN (XOÁ USER)
 # ======================
 def delete_user():
-    pass
+    users = load_users()
+    email = input("Email nhân viên cần xoá: ").strip()
+
+    new_users = [u for u in users if u["email"] != email]
+    if len(new_users) == len(users):
+        print("❌ Không tìm thấy nhân viên.")
+        return
+
+    save_users(new_users)
+    print("✔ Đã xoá nhân viên.")
+
 
 # ======================
 # TÌM KIẾM NHÂN VIÊN
