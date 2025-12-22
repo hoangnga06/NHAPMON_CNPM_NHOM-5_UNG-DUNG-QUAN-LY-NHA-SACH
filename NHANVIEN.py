@@ -21,7 +21,27 @@ def save_users(users):
 # (hiện dữ liệu cũ, sửa chỗ cần)
 # ======================
 def update_info():
-    pass
+    users = load_users()
+    email = input("Email nhân viên: ").strip()
+
+    for u in users:
+        if u["email"] == email:
+            print("\n--- Thông tin hiện tại ---")
+            print(f"Giới tính   : {u.get('gender','')}")
+            print(f"Địa chỉ     : {u.get('address','')}")
+            print(f"Ngày vào làm: {u.get('start_date','')}")
+
+            print("\n--- Nhập thông tin mới (Enter để giữ nguyên) ---")
+            u["gender"] = input(f"Giới tính [{u.get('gender','')}]: ") or u.get("gender","")
+            u["address"] = input(f"Địa chỉ [{u.get('address','')}]: ") or u.get("address","")
+            u["start_date"] = input(f"Ngày vào làm [{u.get('start_date','')}]: ") or u.get("start_date","")
+
+            save_users(users)
+            print("✔ Đã cập nhật thông tin nhân viên.")
+            return
+
+    print("❌ Không tìm thấy nhân viên.")
+
 # ======================
 # XOÁ NHÂN VIÊN (XOÁ USER)
 # ======================
