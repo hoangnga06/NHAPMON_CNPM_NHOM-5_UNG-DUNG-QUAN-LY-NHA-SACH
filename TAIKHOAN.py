@@ -4,6 +4,7 @@ import re
 import hashlib
 import SACH
 import KHACHHANG
+import NHANVIEN
 
 
 DATA_FILE = "users.json"
@@ -30,13 +31,14 @@ def valid_email(email):
 def valid_password(pw):
     return len(pw) >= 6
 
-users = load_users()
+
 session = {"logged_in": False, "email": None}
 
 # ======================
 # TẠO ADMIN BAN ĐẦU
 # ======================
 def create_default_admin():
+    users = load_users()
     for u in users:
         if u["role"] == "admin":
             return
@@ -63,6 +65,7 @@ def valid_phone(phone):
     )
 
 def register():
+    users =load_users()
     print("\n=== ĐĂNG KÝ ===")
     fullname = input("Họ tên: ").strip()
     email = input("Email: ").strip()
@@ -110,6 +113,7 @@ def register():
 # ĐĂNG NHẬP
 # ======================
 def login():
+    users =load_users()
     print("\n=== ĐĂNG NHẬP ===")
     email = input("Email: ")
     pw = input("Mật khẩu: ")
@@ -143,6 +147,7 @@ def change_password():
     if not session["logged_in"]:
         print("❌ Chưa đăng nhập.")
         return
+    users =load_users()
 
     old = input("Mật khẩu cũ: ")
     new = input("Mật khẩu mới: ")
@@ -266,8 +271,9 @@ def main():
                 print("3. Đổi mật khẩu")
 
                 if user["role"] == "admin":
-                   print("4. Quản lý (Admin)")
-                   print("5. Đăng xuất")
+                   print("4. Quản lý nhân viên")
+                   print("5. Quản lý tài khoản")
+                   print("6. Đăng xuất")
                 else:
                    print("4. Đăng xuất")
 
@@ -292,16 +298,21 @@ def main():
                    change_password()
 
                 # =========================
+                # NHÂN VIÊN
+                # =========================
+                elif ch == "4" and user["role"]=="admin":
+                    NHANVIEN.main()
+                # =========================
                 # ADMIN
                 # =========================
-                elif ch == "4" and user["role"] == "admin":
+                elif ch == "5" and user["role"] == "admin":
                    admin_menu()
 
                 # =========================
                 # ĐĂNG XUẤT
                 # =========================
                 elif (ch == "4" and user["role"] == "user") or \
-             (ch == "5" and user["role"] == "admin"):
+             (ch == "6" and user["role"] == "admin"):
 
                    session["logged_in"] = False
                    session["email"] = None
