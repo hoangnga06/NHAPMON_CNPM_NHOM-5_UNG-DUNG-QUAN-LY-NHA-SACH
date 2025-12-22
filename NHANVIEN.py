@@ -62,7 +62,27 @@ def delete_user():
 # TÌM KIẾM NHÂN VIÊN
 # ======================
 def search_user():
-    pass
+    users = load_users()
+    keyword = input("Nhập tên cần tìm: ").strip().lower()
+
+    results = [
+        u for u in users
+        if keyword in u.get("fullname","").lower()
+    ]
+
+    if not results:
+        print("❌ Không tìm thấy nhân viên.")
+        return
+
+    print("\n=== KẾT QUẢ TÌM KIẾM ===")
+    print("-" * 120)
+    print(f"{'HỌ TÊN':20} {'EMAIL':25} {'SĐT':12} {'GIỚI TÍNH':10} {'ĐỊA CHỈ':20} {'NGÀY VÀO':12} {'ROLE':8}")
+    print("-" * 120)
+
+    for u in results:
+        print(f"{u.get('fullname',''):20} {u.get('email',''):25} {u.get('phone',''):12} "
+              f"{u.get('gender',''):10} {u.get('address',''):20} {u.get('start_date',''):12} {u.get('role','')}")
+
 # ======================
 # XEM DANH SÁCH NHÂN VIÊN
 # ======================
