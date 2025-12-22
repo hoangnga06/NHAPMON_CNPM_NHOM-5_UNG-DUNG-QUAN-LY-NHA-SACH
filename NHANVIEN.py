@@ -87,7 +87,17 @@ def search_user():
 # XEM DANH SÁCH NHÂN VIÊN
 # ======================
 def view_users():
-    pass
+    users = load_users()
+
+    print("\n=== DANH SÁCH NHÂN VIÊN ===")
+    print("-" * 120)
+    print(f"{'HỌ TÊN':20} {'EMAIL':25} {'SĐT':12} {'GIỚI TÍNH':10} {'ĐỊA CHỈ':20} {'NGÀY VÀO':12} {'ROLE':8}")
+    print("-" * 120)
+
+    for u in users:
+        print(f"{u.get('fullname',''):20} {u.get('email',''):25} {u.get('phone',''):12} "
+              f"{u.get('gender',''):10} {u.get('address',''):20} {u.get('start_date',''):12} {u.get('role','')}")
+    
 # ======================
 # MENU
 # ======================
