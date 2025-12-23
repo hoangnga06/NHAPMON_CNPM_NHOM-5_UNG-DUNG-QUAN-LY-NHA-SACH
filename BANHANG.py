@@ -130,7 +130,99 @@ def print_invoice(inv):
 # THANH TOÁN
 # ======================
 def checkout(cart, staff_email):
-    pass
+    if not cart:
+        print("❌ Giỏ hàng trống")
+        return
+
+    print("\n=== THÔNG TIN KHÁCH HÀNG ===")
+    name = input("Tên khách: ").strip()
+    phone = input("SĐT: ").strip()
+    address = input("Địa chỉ: ").strip()
+
+    if not name or not phone or not address:
+        print("❌ Không được để trống")
+        return
+
+    if not KHACHHANG.valid_phone(phone):
+        print("❌ SĐT không hợp lệ")
+        return
+
+    customer = KHACHHANG.get_or_create_customer(name, phone, address)
+    books = load_books()
+
+    # kiểm tra tồn kho
+    for bid, item in cart.items():
+        if books[bid]["qty"] < item["qty"]:
+            print(f"❌ Không đủ tồn kho: {item['name']}")
+            return
+
+    total = sum(item["price"] * item["qty"] for item in cart.values())
+
+    print("\n=== GIẢM GIÁ ===")
+    print("1. Giảm theo %")
+    print("2. Giảm theo số tiền")
+    opt = input("Chọn: ")
+
+    discount = 0
+
+    if opt == "1":
+       try:
+         percent = float(input("Nhập % giảm: "))
+       except:
+         print("❌ Dữ liệu không hợp lệ")
+         return
+
+       if percent < 0 or percent > 100:
+         print("❌ % giảm phải từ 0–100")
+         return
+
+       discount = total * percent / 100
+
+    elif opt == "2":
+       try:
+         discount = float(input("Nhập số tiền giảm: "))
+       except:
+         print("❌ Dữ liệu không hợp lệ")
+         return
+
+       if discount < 0 or discount > total:
+         print("❌ Số tiền giảm không hợp lệ")
+         return
+
+    else:
+       print("❌ Lựa chọn không hợp lệ")
+       return
+
+    pay = total - discount
+
+
+    if input("Xác nhận thanh toán (y/n): ").lower() != "y":
+        print("❌ Đã hủy thanh toán")
+        return
+
+    # 👉 TRỪ KHO DUY NHẤT Ở ĐÂY
+    for bid, item in cart.items():
+        books[bid]["qty"] -= item["qty"]
+
+    save_books(books)
+
+    sales = load_sales()
+    invoice = {
+        "id": len(sales) + 1,
+        "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
+        "staff": staff_email,
+        "customer": customer,
+        "items": list(cart.values()),
+        "total": total,
+        "discount": discount,
+        "pay": pay
+    }
+
+    sales.append(invoice)
+    save_sales(sales)
+
+    print_invoice(invoice)
+    cart.clear()
 
 # ======================
 # MENU BÁN HÀNG (USER)
