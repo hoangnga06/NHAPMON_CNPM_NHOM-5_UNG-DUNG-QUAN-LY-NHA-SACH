@@ -9,7 +9,7 @@ def load_books():
     with open(BOOK_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def save_books():
+def save_books(books):
     with open(BOOK_FILE, "w", encoding="utf-8") as f:
         json.dump(books, f, indent=4, ensure_ascii=False)
 
@@ -21,6 +21,8 @@ def save_books():
 # 1) THÊM SÁCH MỚI — add_new_book()
 # ============================================
 def add_new_book():
+    global books
+    books = load_books()
     print("\n=== THÊM SÁCH MỚI ===")
     book_id = input("Nhập mã sách: ")
     if book_id in books:
@@ -49,7 +51,7 @@ def add_new_book():
         "price": price,
         "qty": qty
     }
-    save_books()
+    save_books(books)
     print("Thêm sách thành công!")
 
 # ============================================
@@ -94,7 +96,7 @@ def edit_book():
         "price": price,
         "qty": qty
     }
-    save_books()
+    save_books(books)
     print("✅ Cập nhật thành công!")
 
 # ============================================
@@ -116,7 +118,7 @@ def delete_book():
     confirm = input("Bạn chắc chắn muốn xóa? (y/n): ")
     if confirm.lower() == "y":
         del books[book_id]
-        save_books()
+        save_books(books)
         print("✅ Đã xóa sách thành công!")
     else:
         print("❌ Hủy xóa.")
