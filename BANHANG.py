@@ -33,7 +33,54 @@ def save_sales(sales):
 # GIỎ HÀNG
 # ======================
 def add_to_cart(cart):
-    pass
+    books = load_books()
+    keyword = input("Nhập tên sách: ").lower()
+
+    matches = []
+    for bid, b in books.items():
+        if keyword in b["name"].lower():
+            matches.append((bid, b))
+
+    if not matches:
+        print("❌ Không tìm thấy sách")
+        return
+
+    print("\n--- KẾT QUẢ TÌM KIẾM ---")
+    for i, (bid, b) in enumerate(matches, 1):
+        print(f"{i}. {b['name']} | Giá: {b['price']} | Tồn: {b['qty']}")
+
+    try:
+        choice = int(input("Chọn sách: ")) - 1
+        book_id, book = matches[choice]
+    except:
+        print("❌ Lựa chọn không hợp lệ")
+        return
+
+    try:
+        qty = int(input("Số lượng: "))
+    except:
+        print("❌ Số lượng không hợp lệ")
+        return
+
+    if qty <= 0:
+        print("❌ Số lượng phải > 0")
+        return
+
+    if qty > book["qty"]:
+        print("❌ Không đủ tồn kho")
+        return
+
+    # 👉 CỘNG DỒN VÀO GIỎ
+    if book_id in cart:
+        cart[book_id]["qty"] += qty
+    else:
+        cart[book_id] = {
+            "name": book["name"],
+            "price": book["price"],
+            "qty": qty
+        }
+
+    print("✅ Đã thêm vào giỏ hàng")
 # XEM GIỎ HÀNG
 def view_cart(cart):
     pass
