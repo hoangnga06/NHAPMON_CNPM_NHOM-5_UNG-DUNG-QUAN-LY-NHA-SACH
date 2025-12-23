@@ -83,7 +83,18 @@ def add_to_cart(cart):
     print("✅ Đã thêm vào giỏ hàng")
 # XEM GIỎ HÀNG
 def view_cart(cart):
-    pass
+    if not cart:
+        print("🛒 Giỏ hàng trống")
+        return
+
+    print("\n=== GIỎ HÀNG ===")
+    total = 0
+    for i, (bid, item) in enumerate(cart.items(), 1):
+        amount = item["price"] * item["qty"]
+        total += amount
+        print(f"{i}. {item['name']} x{item['qty']} = {amount:,.0f}")
+
+    print(f"Tổng tiền: {total:,.0f}")
 # CAP NHAT GIỎ HÀNG
 def update_cart(cart):
     if not cart:
