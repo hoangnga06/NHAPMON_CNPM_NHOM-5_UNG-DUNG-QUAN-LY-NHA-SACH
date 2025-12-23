@@ -17,9 +17,6 @@ def save_books():
 # QUẢN LÝ SÁCH - FULL CODE
 # =============================
 
-# Database giả lập
-books = load_books()
-
 # ============================================
 # 1) THÊM SÁCH MỚI — add_new_book()
 # ============================================
@@ -59,6 +56,8 @@ def add_new_book():
 # 2) CHỈNH SỬA TT SÁCH — edit_book()
 # ============================================
 def edit_book():
+    global books
+    books = load_books()
     print("\n=== CHỈNH SỬA THÔNG TIN SÁCH ===")
     book_id = input("Nhập mã sách cần sửa: ")
     if book_id not in books:
@@ -102,6 +101,8 @@ def edit_book():
 # 3) XÓA SÁCH — delete_book()
 # ============================================
 def delete_book():
+    global books
+    books = load_books()
     print("\n=== XÓA SÁCH ===")
     if len(books) == 0:
         print("❌ Kho sách trống.")
@@ -125,6 +126,8 @@ def delete_book():
 # 4) XEM DANH SÁCH SÁCH — view_books()
 # ============================================
 def view_books(show_pause=True):
+    global books 
+    books=load_books()
     print("\n=== DANH SÁCH SÁCH ===")
 
     if len(books) == 0:
@@ -158,6 +161,8 @@ def search_book():
     - Tìm kiếm theo mã / tên / tác giả
     - Hiển thị dạng bảng
     """
+    global books 
+    books=load_books()
     print("\n=== TÌM KIẾM SÁCH ===")
     keyword = input("Nhập từ khóa: ").lower()
     results = {}

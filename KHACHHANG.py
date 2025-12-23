@@ -27,40 +27,43 @@ customers = load_customers()
 
 
 # ==========================
-# THÊM KHÁCH
+# LẤY HOẶC TẠO KHÁCH (DÙNG CHO BÁN HÀNG)
 # ==========================
-def add_customer():
+def get_or_create_customer(name, phone, address):
     global customers
-    print("\n=== THÊM KHÁCH HÀNG ===")
-
-    name = input("Tên: ").strip()
-    phone = input("SĐT: ").strip()
-    address = input("Địa chỉ: ").strip()
-
-    if not name or not phone or not address:
-       print("❌ Không được để trống tên, SĐT hoặc địa chỉ")
-       return
+    phone = phone.strip()
+    # kiểm tra SĐT hợp lệ
     if not valid_phone(phone):
-       print("❌ SĐT phải bắt đầu bằng 0 và đủ 10 số")
-       return
+        return None
 
-
-    # kiểm tra trùng SĐT
-    for c in customers.values():
+    # tìm theo SĐT (khách cũ)
+    for cid, c in customers.items():
         if c["phone"] == phone:
-            print("❌ SĐT đã tồn tại!")
-            return
+            return {
+                "id": cid,
+                "name": c["name"],
+                "phone": c["phone"],
+                "address": c["address"]
+            }
 
+    # chưa có → tạo mới(chỉ khi đủ thông tin)
+    if not name or not address:
+        return None
     cid = str(len(customers) + 1)
-
     customers[cid] = {
         "name": name,
         "phone": phone,
         "address": address
     }
-
     save_customers(customers)
-    print("✅ Thêm khách hàng thành công!")
+
+    return {
+        "id": cid,
+        "name": name,
+        "phone": phone,
+        "address": address
+    }
+
 
 
 # ==========================
@@ -150,24 +153,20 @@ def search_customer():
 # ==========================
 # MENU KHÁCH HÀNG
 # ==========================
-def main():
+def main(role):
     while True:
         print("\n===== MENU KHÁCH HÀNG =====")
-        print("1. Thêm khách hàng")
-        print("2. Chỉnh sửa khách hàng")
-        print("3. Xem danh sách khách")
-        print("4. Tìm kiếm khách hàng")
+        print("1. Chỉnh sửa khách hàng")
+        print("2. Xem danh sách khách")
+        print("3. Tìm kiếm khách hàng")
         print("0. Quay lại")
 
         ch = input("Chọn: ")
-
         if ch == "1":
-            add_customer()
-        elif ch == "2":
             edit_customer()
-        elif ch == "3":
+        elif ch == "2":
             view_customers()
-        elif ch == "4":
+        elif ch == "3":
             search_customer()
         elif ch == "0":
             break
