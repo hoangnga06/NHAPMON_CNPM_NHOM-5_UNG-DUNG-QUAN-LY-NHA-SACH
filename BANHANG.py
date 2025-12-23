@@ -136,7 +136,30 @@ def update_cart(cart):
 # IN HÓA ĐƠN
 # ======================
 def print_invoice(inv):
-    pass
+    print("\n" + "=" * 60)
+    print("               HÓA ĐƠN NHÀ SÁCH")
+    print("=" * 60)
+    print(f"Mã đơn     : {inv['id']}")
+    print(f"Thời gian  : {inv['time']}")
+    print(f"Nhân viên  : {inv['staff']}")
+    print("-" * 60)
+    print(f"Khách hàng : {inv['customer']['name']}")
+    print(f"SĐT        : {inv['customer']['phone']}")
+    print(f"Địa chỉ    : {inv['customer']['address']}")
+    print("-" * 60)
+
+    print("{:<25}{:>5}{:>12}{:>12}".format("Sách", "SL", "Giá", "TT"))
+    for i in inv["items"]:
+        print("{:<25}{:>5}{:>12,.0f}{:>12,.0f}".format(
+            i["name"][:25], i["qty"], i["price"], i["price"] * i["qty"]
+        ))
+
+    print("-" * 60)
+    print(f"Tổng tiền : {inv['total']:>35,.0f}")
+    print(f"Giảm giá  : {inv['discount']:>35,.0f}")
+    print(f"Khách trả : {inv['pay']:>35,.0f}")
+    print("=" * 60)
+    print("         CẢM ƠN QUÝ KHÁCH ❤️")
 # ======================
 # THANH TOÁN
 # ======================
