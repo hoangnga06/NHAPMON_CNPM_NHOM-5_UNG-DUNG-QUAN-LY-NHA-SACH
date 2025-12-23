@@ -169,19 +169,41 @@ def checkout(cart, staff_email):
         return
 
     print("\n=== THÔNG TIN KHÁCH HÀNG ===")
-    name = input("Tên khách: ").strip()
     phone = input("SĐT: ").strip()
-    address = input("Địa chỉ: ").strip()
-
-    if not name or not phone or not address:
-        print("❌ Không được để trống")
-        return
+    # Kiểm tra SĐt
+    if not phone:
+        print("❌ Chưa nhập số điện thoại")
+        return 
 
     if not KHACHHANG.valid_phone(phone):
         print("❌ SĐT không hợp lệ")
         return
+    # thử lấy khách cũ trước
+    customer = KHACHHANG.get_or_create_customer("", phone, "")
+    if customer:
+       print("\n📌 KHÁCH HÀNG ĐÃ TỒN TẠI")
+       print(f"👤 Tên     : {customer['name']}")
+       print(f"📞 SĐT     : {customer['phone']}")
+       print(f"🏠 Địa chỉ : {customer['address']}")
 
-    customer = KHACHHANG.get_or_create_customer(name, phone, address)
+       if input("➡️ Tiếp tục tạo hóa đơn? (y/n): ").lower() != "y":
+          print("❌ Đã hủy thanh toán")
+          return
+    # nếu chưas có -> tạo mới
+    else:
+        print("📌 Khách mới, vui lòng nhập thông tin")
+        name =input("👤 Tên khách:").strip()
+        address=input("🏠 Địa chỉ:").strip()
+        if not name or not address:
+           print("❌ Không được để trống")
+           return
+
+        customer = KHACHHANG.get_or_create_customer(name, phone, address)
+    # phòng trường hợp lỗi
+    if not customer:
+        print("❌ Không thể tạo khách hàng")
+        return
+        
     books = load_books()
 
     # kiểm tra tồn kho
