@@ -84,6 +84,9 @@ def add_to_cart(cart):
 # XEM GIỎ HÀNG
 def view_cart(cart):
     pass
+# CAP NHAT GIỎ HÀNG
+def update_cart(cart):
+    pass
 # ======================
 # IN HÓA ĐƠN
 # ======================
