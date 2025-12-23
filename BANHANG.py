@@ -86,7 +86,41 @@ def view_cart(cart):
     pass
 # CAP NHAT GIỎ HÀNG
 def update_cart(cart):
-    pass
+    if not cart:
+        print("🛒 Giỏ hàng trống")
+        return
+
+    view_cart(cart)
+    book_ids = list(cart.keys())
+
+    try:
+        idx = int(input("Chọn sách cần sửa: ")) - 1
+        book_id = book_ids[idx]
+    except:
+        print("❌ Lựa chọn không hợp lệ")
+        return
+
+    print("1. Thay đổi số lượng")
+    print("2. Xóa khỏi giỏ")
+    ch = input("Chọn: ")
+
+    if ch == "1":
+        try:
+            new_qty = int(input("Số lượng mới: "))
+        except:
+            print("❌ Không hợp lệ")
+            return
+
+        if new_qty <= 0:
+            del cart[book_id]
+            print("✅ Đã xóa sách khỏi giỏ")
+        else:
+            cart[book_id]["qty"] = new_qty
+            print("✅ Đã cập nhật số lượng")
+
+    elif ch == "2":
+        del cart[book_id]
+        print("✅ Đã xóa sách khỏi giỏ")
 # ======================
 # IN HÓA ĐƠN
 # ======================
