@@ -209,8 +209,27 @@ def create_import(admin_email):
 # XEM DANH SÁCH TQ
 # ======================
 def view_imports():
-    pass
+    imports = load_imports()
 
+    if not imports:
+        print("📭 Chưa có phiếu nhập nào")
+        return
+
+    print("\n=== DANH SÁCH PHIẾU NHẬP ===")
+    print("{:<10} {:<25} {:<20} {:>15}".format(
+        "Mã phiếu", "Nhà cung cấp", "Ngày", "Tổng tiền"
+    ))
+    print("-" * 75)
+
+    for p in imports:
+        s = p.get("supplier", {})
+        print("{:<10} {:<25} {:<20} {:>15}".format(
+            p.get("import_id", ""),
+            s.get("name", "❓"),
+            p.get("created_at", ""),
+            f"{p.get('total', 0):,}đ"
+           
+        ))
 # ======================
 # XEM CHI TIẾT
 # ======================
