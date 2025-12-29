@@ -26,8 +26,37 @@ def load_sales():
 # BÁO CÁO TỒN KHO
 # =================================================
 def report_inventory():
-    pass
+    books = load_books()
+    if not books:
+        print("❌ Chưa có dữ liệu sách")
+        return
 
+    # Gom sách theo thể loại
+    categories = {}
+    for bid, b in books.items():
+        cat = b.get("category", "KHÁC").upper()
+        categories.setdefault(cat, [])
+        categories[cat].append((bid, b))
+
+    # Sắp xếp thể loại theo ABC
+    for cat in sorted(categories.keys()):
+        print("\n" + "=" * 100)
+        print(f"📚 THỂ LOẠI: {cat}")
+        print("=" * 100)
+        print("{:<8} {:<30} {:<10} {}".format(
+            "Mã", "Tên sách", "Tồn", "Cảnh báo"
+        ))
+        print("-" * 100)
+
+        for bid, b in categories[cat]:
+            qty = b.get("qty", 0)
+            warn = "⚠️ Tồn thấp" if qty < 5 else ""
+            print("{:<8} {:<30} {:<10} {}".format(
+                bid,
+                b.get("name", ""),
+                qty,
+                warn
+            ))
 # =================================================
 # BÁO CÁO DOANH THU
 # =================================================
