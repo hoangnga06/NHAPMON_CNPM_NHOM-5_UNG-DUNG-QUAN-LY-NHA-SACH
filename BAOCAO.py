@@ -61,7 +61,59 @@ def report_inventory():
 # BÁO CÁO DOANH THU
 # =================================================
 def report_revenue():
-    pass
+    sales = load_sales()
+    if not sales:
+        print("❌ Chưa có dữ liệu bán hàng")
+        return
+
+    stats = {}
+
+    for s in sales:
+        date = s["time"].split(" ")[0]   # dd/mm/yyyy
+        stats.setdefault(date, 0)
+        stats[date] += s.get("pay", 0)
+
+    print("\n💰 BÁO CÁO DOANH THU THEO NGÀY")
+    print("-" * 40)
+    for d in sorted(stats):
+        print(f"{d}: {stats[d]:,.0f} đ")
+def report_revenue_by_month():
+    sales = load_sales()
+    if not sales:
+        print("❌ Chưa có dữ liệu bán hàng")
+        return
+
+    stats = {}
+
+    for s in sales:
+        # time: dd/mm/yyyy hh:mm
+        d = datetime.strptime(s["time"], "%d/%m/%Y %H:%M")
+        key = d.strftime("%m/%Y")  # tháng/năm
+        stats.setdefault(key, 0)
+        stats[key] += s.get("pay", 0)
+
+    print("\n💰 BÁO CÁO DOANH THU THEO THÁNG")
+    print("-" * 40)
+    for k in sorted(stats):
+        print(f"{k}: {stats[k]:,.0f} đ")
+def report_revenue_by_year():
+    sales = load_sales()
+    if not sales:
+        print("❌ Chưa có dữ liệu bán hàng")
+        return
+
+    stats = {}
+
+    for s in sales:
+        d = datetime.strptime(s["time"], "%d/%m/%Y %H:%M")
+        year = d.year
+        stats.setdefault(year, 0)
+        stats[year] += s.get("pay", 0)
+
+    print("\n💰 BÁO CÁO DOANH THU THEO NĂM")
+    print("-" * 40)
+    for y in sorted(stats):
+        print(f"{y}: {stats[y]:,.0f} đ")
 
 # =================================================
 # XUẤT EXCEL
