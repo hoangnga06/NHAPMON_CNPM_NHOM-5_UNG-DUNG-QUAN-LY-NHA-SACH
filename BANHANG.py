@@ -29,6 +29,12 @@ def save_sales(sales):
     with open(SALE_FILE, "w", encoding="utf-8") as f:
         json.dump(sales, f, indent=4, ensure_ascii=False)
 
+def next_invoice_id(sales):
+    if not sales:
+        return 1
+    return max(s["id"] for s in sales) + 1
+
+
 # ======================
 # GIỎ HÀNG
 # ======================
@@ -36,10 +42,8 @@ def add_to_cart(cart):
     books = load_books()
     keyword = input("Nhập tên sách: ").lower()
 
-    matches = []
-    for bid, b in books.items():
-        if keyword in b["name"].lower():
-            matches.append((bid, b))
+    matches = [(bid, b) for bid, b in books.items()
+               if keyword in b["name"].lower()]
 
     if not matches:
         print("❌ Không tìm thấy sách")
@@ -50,8 +54,8 @@ def add_to_cart(cart):
         print(f"{i}. {b['name']} | Giá: {b['price']} | Tồn: {b['qty']}")
 
     try:
-        choice = int(input("Chọn sách: ")) - 1
-        book_id, book = matches[choice]
+        idx = int(input("Chọn sách: ")) - 1
+        book_id, book = matches[idx]
     except:
         print("❌ Lựa chọn không hợp lệ")
         return
@@ -70,18 +74,22 @@ def add_to_cart(cart):
         print("❌ Không đủ tồn kho")
         return
 
-    # 👉 CỘNG DỒN VÀO GIỎ
     if book_id in cart:
+        if cart[book_id]["qty"] + qty > book["qty"]:
+            print("❌ Tổng số lượng vượt tồn kho")
+            return
         cart[book_id]["qty"] += qty
     else:
         cart[book_id] = {
+            "book_id": book_id,
             "name": book["name"],
             "price": book["price"],
             "qty": qty
         }
 
     print("✅ Đã thêm vào giỏ hàng")
-# XEM GIỎ HÀNG
+
+
 def view_cart(cart):
     if not cart:
         print("🛒 Giỏ hàng trống")
@@ -89,24 +97,26 @@ def view_cart(cart):
 
     print("\n=== GIỎ HÀNG ===")
     total = 0
-    for i, (bid, item) in enumerate(cart.items(), 1):
+    for i, item in enumerate(cart.values(), 1):
         amount = item["price"] * item["qty"]
         total += amount
         print(f"{i}. {item['name']} x{item['qty']} = {amount:,.0f}")
 
     print(f"Tổng tiền: {total:,.0f}")
-# CAP NHAT GIỎ HÀNG
+
+
 def update_cart(cart):
     if not cart:
         print("🛒 Giỏ hàng trống")
         return
 
+    books = load_books()
     view_cart(cart)
-    book_ids = list(cart.keys())
+    keys = list(cart.keys())
 
     try:
         idx = int(input("Chọn sách cần sửa: ")) - 1
-        book_id = book_ids[idx]
+        bid = keys[idx]
     except:
         print("❌ Lựa chọn không hợp lệ")
         return
@@ -123,15 +133,19 @@ def update_cart(cart):
             return
 
         if new_qty <= 0:
-            del cart[book_id]
+            del cart[bid]
             print("✅ Đã xóa sách khỏi giỏ")
+        elif new_qty > books[bid]["qty"]:
+            print("❌ Vượt quá tồn kho")
         else:
-            cart[book_id]["qty"] = new_qty
+            cart[bid]["qty"] = new_qty
             print("✅ Đã cập nhật số lượng")
 
     elif ch == "2":
-        del cart[book_id]
+        del cart[bid]
         print("✅ Đã xóa sách khỏi giỏ")
+
+
 # ======================
 # IN HÓA ĐƠN
 # ======================
@@ -160,6 +174,8 @@ def print_invoice(inv):
     print(f"Khách trả : {inv['pay']:>35,.0f}")
     print("=" * 60)
     print("         CẢM ƠN QUÝ KHÁCH ❤️")
+
+
 # ======================
 # THANH TOÁN
 # ======================
@@ -168,103 +184,54 @@ def checkout(cart, staff_email):
         print("❌ Giỏ hàng trống")
         return
 
-    print("\n=== THÔNG TIN KHÁCH HÀNG ===")
-    phone = input("SĐT: ").strip()
-    # Kiểm tra SĐt
-    if not phone:
-        print("❌ Chưa nhập số điện thoại")
-        return 
-
+    phone = input("SĐT khách: ").strip()
     if not KHACHHANG.valid_phone(phone):
         print("❌ SĐT không hợp lệ")
         return
-    # thử lấy khách cũ trước
+
     customer = KHACHHANG.get_or_create_customer("", phone, "")
-    if customer:
-       print("\n📌 KHÁCH HÀNG ĐÃ TỒN TẠI")
-       print(f"👤 Tên     : {customer['name']}")
-       print(f"📞 SĐT     : {customer['phone']}")
-       print(f"🏠 Địa chỉ : {customer['address']}")
-
-       if input("➡️ Tiếp tục tạo hóa đơn? (y/n): ").lower() != "y":
-          print("❌ Đã hủy thanh toán")
-          return
-    # nếu chưas có -> tạo mới
-    else:
-        print("📌 Khách mới, vui lòng nhập thông tin")
-        name =input("👤 Tên khách:").strip()
-        address=input("🏠 Địa chỉ:").strip()
-        if not name or not address:
-           print("❌ Không được để trống")
-           return
-
-        customer = KHACHHANG.get_or_create_customer(name, phone, address)
-    # phòng trường hợp lỗi
     if not customer:
-        print("❌ Không thể tạo khách hàng")
-        return
-        
-    books = load_books()
+        print("📌 Khách mới")
+        name = input("Tên: ").strip()
+        address = input("Địa chỉ: ").strip()
+        customer = KHACHHANG.get_or_create_customer(name, phone, address)
+        if not customer:
+            print("❌ Không thể tạo khách")
+            return
 
-    # kiểm tra tồn kho
+    books = load_books()
     for bid, item in cart.items():
         if books[bid]["qty"] < item["qty"]:
             print(f"❌ Không đủ tồn kho: {item['name']}")
             return
 
-    total = sum(item["price"] * item["qty"] for item in cart.values())
+    total = sum(i["price"] * i["qty"] for i in cart.values())
 
-    print("\n=== GIẢM GIÁ ===")
     print("1. Giảm theo %")
-    print("2. Giảm theo số tiền")
+    print("2. Giảm theo tiền")
     opt = input("Chọn: ")
-
     discount = 0
 
     if opt == "1":
-       try:
-         percent = float(input("Nhập % giảm: "))
-       except:
-         print("❌ Dữ liệu không hợp lệ")
-         return
-
-       if percent < 0 or percent > 100:
-         print("❌ % giảm phải từ 0–100")
-         return
-
-       discount = total * percent / 100
-
+        percent = float(input("Nhập %: "))
+        discount = total * percent / 100
     elif opt == "2":
-       try:
-         discount = float(input("Nhập số tiền giảm: "))
-       except:
-         print("❌ Dữ liệu không hợp lệ")
-         return
-
-       if discount < 0 or discount > total:
-         print("❌ Số tiền giảm không hợp lệ")
-         return
-
+        discount = float(input("Nhập tiền giảm: "))
     else:
-       print("❌ Lựa chọn không hợp lệ")
-       return
-
-    pay = total - discount
-
-
-    if input("Xác nhận thanh toán (y/n): ").lower() != "y":
-        print("❌ Đã hủy thanh toán")
+        print("❌ Lựa chọn sai")
         return
 
-    # 👉 TRỪ KHO DUY NHẤT Ở ĐÂY
+    pay = total - discount
+    if input("Xác nhận thanh toán (y/n): ").lower() != "y":
+        return
+
     for bid, item in cart.items():
         books[bid]["qty"] -= item["qty"]
-
     save_books(books)
 
     sales = load_sales()
     invoice = {
-        "id": len(sales) + 1,
+        "id": next_invoice_id(sales),
         "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "staff": staff_email,
         "customer": customer,
@@ -280,22 +247,21 @@ def checkout(cart, staff_email):
     print_invoice(invoice)
     cart.clear()
 
+
 # ======================
-# MENU BÁN HÀNG (USER)
+# MENU BÁN HÀNG
 # ======================
 def sales_menu(staff_email):
-    cart = {}   # ❗ GIỎ HÀNG SỐNG TRONG SUỐT PHIÊN
-
+    cart = {}
     while True:
         print("\n===== BÁN HÀNG =====")
         print("1. Thêm sách vào giỏ")
-        print("2. Xem giỏ hàng")
-        print("3. Sửa giỏ hàng")
+        print("2. Xem giỏ")
+        print("3. Sửa giỏ")
         print("4. Thanh toán")
         print("0. Quay lại")
 
         ch = input("Chọn: ")
-
         if ch == "1":
             add_to_cart(cart)
         elif ch == "2":
