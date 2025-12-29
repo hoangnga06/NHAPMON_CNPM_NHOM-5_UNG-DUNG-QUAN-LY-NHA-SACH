@@ -3,6 +3,9 @@ import SACH
 import KHACHHANG
 import NHANVIEN
 import BANHANG
+import NHAPHANG
+import BAOCAO
+
 
 
 def main():
@@ -39,6 +42,7 @@ def main():
 
             if not user:
                 TAIKHOAN.session["logged_in"] = False
+                TAIKHOAN.session["email"] = None
                 break
 
             while True:
@@ -64,14 +68,18 @@ def main():
                         TAIKHOAN.session["logged_in"] = False
                         TAIKHOAN.session["email"] = None
                         break
+                    
 
                 else:  # ADMIN
                     print("1. Quản lý sách")
                     print("2. Quản lý khách hàng")
                     print("3. Quản lý nhân viên")
                     print("4. Quản lý tài khoản")
-                    print("5. Đổi mật khẩu")
-                    print("6. Đăng xuất")
+                    print("5. Nhập hàng")
+                    print("6. Báo cáo")
+                    print("7. Đổi mật khẩu")
+                    print("8. Đăng xuất")
+                   
 
                     ch = input("Chọn: ")
                     if ch == "1":
@@ -81,13 +89,18 @@ def main():
                     elif ch == "3":
                         NHANVIEN.main()
                     elif ch == "4":
-                        TAIKHOAN.admin_menu()
+                        TAIKHOAN.admin_menu(user["email"])
                     elif ch == "5":
-                        TAIKHOAN.change_password()
+                        NHAPHANG.nhaphang_menu(user["email"])
                     elif ch == "6":
+                        BAOCAO.menu_baocao()
+                    elif ch == "7":
+                        TAIKHOAN.change_password()
+                    elif ch == "8":
                         TAIKHOAN.session["logged_in"] = False
                         TAIKHOAN.session["email"] = None
                         break
+
 
 if __name__ == "__main__":
     main()
