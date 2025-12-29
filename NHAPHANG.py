@@ -52,7 +52,64 @@ def choose_existing_book(matches):
 # TẠO PHIẾU + THÊM SÁCH
 # ======================
 def create_import(admin_email):
-    pass
+    imports = load_imports()
+    books = SACH.load_books()
+    print("\n=== TẠO PHIẾU NHẬP ===")
+    # ===== NHÀ CUNG CẤP =====
+    print("\n📦 THÔNG TIN NHÀ CUNG CẤP")
+    name = input("Tên NCC (*): ").strip()
+    phone = input("SĐT NCC (*): ").strip()
+    address = input("Địa chỉ NCC: ").strip()
+
+    if not name:
+      print("❌ Tên nhà cung cấp không được để trống")
+      return
+
+    if not valid_phone(phone):
+      print("❌ SĐT nhà cung cấp không hợp lệ")
+      return
+
+    supplier = {
+      "name": name,
+      "phone": phone,
+      "address": address
+    }
+    
+    # ===== KIỂM TRA TRÙNG NCC THEO SĐT =====
+    for p in imports:
+       old = p.get("supplier", {})
+       old_phone = old.get("phone","").strip()
+       new_phone = supplier["phone"].strip()
+
+       if old_phone and old_phone == new_phone:
+          # cùng SĐT nhưng khác tên hoặc địa chỉ → LỖI
+          if old.get("name") != supplier["name"] or old.get("address") != supplier["address"]:
+            print("❌ SĐT nhà cung cấp đã tồn tại")
+            print("📌 Thông tin đã lưu:")
+            print(f"   Tên: {old.get('name')}")
+            print(f"   Địa chỉ: {old.get('address')}")
+            print("⚠️ Không được phép nhập NCC trùng SĐT nhưng khác thông tin")
+            return
+          else:
+            # cùng SĐT + cùng info → dùng lại NCC cũ
+            supplier = old
+            break
+
+
+    if not supplier["name"]:
+        print("❌ Tên nhà cung cấp không được để trống")
+        return
+
+    import_id = f"PN{len(imports)+1:04d}"
+
+    phieu = {
+        "import_id": import_id,
+        "supplier": supplier,
+        "admin": admin_email,
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "items": [],
+        "total": 0
+    }
 # ======================
 # XEM DANH SÁCH TQ
 # ======================
