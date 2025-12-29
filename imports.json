@@ -1,0 +1,89 @@
+[
+    {
+        "import_id": "PN0001",
+        "supplier": {
+            "name": "Hồng Hà",
+            "phone": "0987654345",
+            "address": "Huế"
+        },
+        "admin": "admin@gmail.com",
+        "created_at": "2025-12-30 02:20:07",
+        "items": [
+            {
+                "book_id": "a000",
+                "qty": 20,
+                "price": 27000.0,
+                "subtotal": 540000.0
+            },
+            {
+                "book_id": "a001",
+                "qty": 20,
+                "price": 28000.0,
+                "subtotal": 560000.0
+            }
+        ],
+        "total": 1100000.0
+    },
+    {
+        "import_id": "PN0002",
+        "supplier": {
+            "name": "FAHASA",
+            "phone": "0987654654",
+            "address": "Huế"
+        },
+        "admin": "admin@gmail.com",
+        "created_at": "2025-12-30 02:24:48",
+        "items": [
+            {
+                "book_id": "a002",
+                "qty": 20,
+                "price": 18000.0,
+                "subtotal": 360000.0
+            },
+            {
+                "book_id": "a003",
+                "qty": 30,
+                "price": 23000.0,
+                "subtotal": 690000.0
+            }
+        ],
+        "total": 1050000.0
+    },
+    {
+        "import_id": "PN0003",
+        "supplier": {
+            "name": "Book",
+            "phone": "0987654246",
+            "address": "Đà Nẵng"
+        },
+        "admin": "admin@gmail.com",
+        "created_at": "2025-12-30 02:28:38",
+        "items": [
+            {
+                "book_id": "a004",
+                "qty": 50,
+                "price": 20000.0,
+                "subtotal": 1000000.0
+            },
+            {
+                "book_id": "a005",
+                "qty": 80,
+                "price": 15000.0,
+                "subtotal": 1200000.0
+            },
+            {
+                "book_id": "a006",
+                "qty": 50,
+                "price": 23000.0,
+                "subtotal": 1150000.0
+            },
+            {
+                "book_id": "a007",
+                "qty": 80,
+                "price": 20000.0,
+                "subtotal": 1600000.0
+            }
+        ],
+        "total": 4950000.0
+    }
+]

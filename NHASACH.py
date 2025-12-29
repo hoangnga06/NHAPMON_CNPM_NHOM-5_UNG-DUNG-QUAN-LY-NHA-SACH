@@ -89,7 +89,7 @@ def main():
                     elif ch == "3":
                         NHANVIEN.main()
                     elif ch == "4":
-                        TAIKHOAN.admin_menu(user["email"])
+                        TAIKHOAN.admin_menu()
                     elif ch == "5":
                         NHAPHANG.nhaphang_menu(user["email"])
                     elif ch == "6":

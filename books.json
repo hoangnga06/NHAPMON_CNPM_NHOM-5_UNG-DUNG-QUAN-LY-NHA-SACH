@@ -1,0 +1,58 @@
+{
+    "a000": {
+        "name": "Lịch sử Việt Nam",
+        "author": "Nguyễn A",
+        "category": "Lịch sử",
+        "price": 30000.0,
+        "qty": 20
+    },
+    "a001": {
+        "name": "Văn học Việt Nam",
+        "author": "Nguyễn B",
+        "category": "Văn học",
+        "price": 32000.0,
+        "qty": 20
+    },
+    "a002": {
+        "name": "Ngữ văn 6",
+        "author": "Lê A",
+        "category": "SGK",
+        "price": 20000.0,
+        "qty": 20
+    },
+    "a003": {
+        "name": "Toán 6",
+        "author": "Lê B",
+        "category": "SGK",
+        "price": 25000.0,
+        "qty": 30
+    },
+    "a004": {
+        "name": "Conan tập dài",
+        "author": "Trần A",
+        "category": "Truyện",
+        "price": 22000.0,
+        "qty": 50
+    },
+    "a005": {
+        "name": "Conan tập ngắn",
+        "author": "Trần A",
+        "category": "Truyện",
+        "price": 18000.0,
+        "qty": 80
+    },
+    "a006": {
+        "name": "Doraemon tập dài",
+        "author": "Hồ A",
+        "category": "truyện",
+        "price": 25000.0,
+        "qty": 50
+    },
+    "a007": {
+        "name": "Doraemon tập ngắn",
+        "author": "Hồ A",
+        "category": "Truyện",
+        "price": 23000.0,
+        "qty": 80
+    }
+}
