@@ -13,7 +13,7 @@ def main():
 
     while True:
         # =========================
-        # CHƯA ĐĂNG NHẬP
+        ## CHƯA ĐĂNG NHẬP
         # =========================
         if not TAIKHOAN.session["logged_in"]:
             print("\n=== HỆ THỐNG QUẢN LÝ NHÀ SÁCH ===")

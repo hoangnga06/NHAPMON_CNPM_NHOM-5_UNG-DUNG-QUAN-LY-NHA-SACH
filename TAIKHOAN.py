@@ -169,7 +169,7 @@ def change_password():
             if new != cf:
                 print("❌ Xác nhận không khớp.")
                 return
-            # Lưu mật khẩu mới
+            # Lưu mk mới
             u["password"] = hash_password(new)
             save_users(users)
             print("✔ Đổi mật khẩu thành công.")

@@ -25,5 +25,14 @@
         "role": "user",
         "locked": false,
         "login_fail": 0
+    },
+    {
+        "fullname": "Nguyễn D",
+        "email": "D@gmail.com",
+        "phone": "0987546324",
+        "password": "60166a3b3b252885e0c489b2da291048d8af0349326d23d96140b065f65f31f5",
+        "role": "user",
+        "locked": false,
+        "login_fail": 0
     }
 ]
