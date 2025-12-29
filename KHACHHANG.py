@@ -23,14 +23,13 @@ def valid_phone(phone):
         and len(phone) == 10
     )
 
-customers = load_customers()
 
 
 # ==========================
 # LẤY HOẶC TẠO KHÁCH (DÙNG CHO BÁN HÀNG)
 # ==========================
 def get_or_create_customer(name, phone, address):
-    global customers
+    customers = load_customers()
     phone = phone.strip()
     # kiểm tra SĐT hợp lệ
     if not valid_phone(phone):
@@ -49,7 +48,11 @@ def get_or_create_customer(name, phone, address):
     # chưa có → tạo mới(chỉ khi đủ thông tin)
     if not name or not address:
         return None
-    cid = str(len(customers) + 1)
+
+    if customers:
+        cid = str(max(map(int, customers.keys())) + 1)
+    else:
+        cid = "1"
     customers[cid] = {
         "name": name,
         "phone": phone,
@@ -70,7 +73,7 @@ def get_or_create_customer(name, phone, address):
 # SỬA KHÁCH
 # ==========================
 def edit_customer():
-    global customers
+    customers = load_customers()
     print("\n=== CHỈNH SỬA KHÁCH ===")
 
     cid = input("Nhập ID khách: ").strip()
@@ -115,7 +118,7 @@ def edit_customer():
 # XEM Danh Sach KHÁCH
 # ==========================
 def view_customers():
-    
+    customers = load_customers()
     print("\n=== DANH SÁCH KHÁCH HÀNG ===")
 
     if not customers:
@@ -133,6 +136,7 @@ def view_customers():
 # TÌM KIẾM
 # ==========================
 def search_customer():
+    customers = load_customers()
     print("\n=== TÌM KIẾM KHÁCH ===")
     key = input("Nhập tên hoặc SĐT: ").lower()
 
