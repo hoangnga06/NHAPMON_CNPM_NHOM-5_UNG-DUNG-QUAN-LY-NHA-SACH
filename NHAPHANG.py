@@ -274,7 +274,109 @@ def view_import_detail():
 # CHỈNH SỬA PHIẾU 
 # ======================
 def edit_import():
-    pass
+    pid = input(" ✏️ Nhập mã phiếu cần sửa: ")
+    imports = load_imports()
+    books = SACH.load_books()
+    # TÌM PHIẾU
+    p = next((x for x in imports if x["import_id"] == pid), None)
+    if not p:
+        print("❌ Không tìm thấy phiếu")
+        return
+
+    print(f"\n=== ✏️ CHỈNH SỬA PHIẾU {pid} ===")
+    s = p.get("supplier", {})
+    print(f"Nhà cung cấp: {s.get('name','')}")
+    print(f"Ngày nhập: {p['created_at']}")
+    print("-" * 60)
+    # ===== CHỈNH THÔNG TIN NHÀ CUNG CẤP =====
+    print("\n--- ✏️ Chỉnh thông tin nhà cung cấp ---")
+    new_name = input(f"Tên NCC [{s.get('name','')}]: ").strip()
+    new_phone = input(f"SĐT [{s.get('phone','')}]: ").strip()
+    new_addr = input(f"Địa chỉ [{s.get('address','')}]: ").strip()
+
+    # nếu bỏ trống thì giữ nguyên
+    if new_name:
+       s["name"] = new_name
+
+    if new_phone:
+       # kiểm tra SĐT: bắt đầu bằng 0, đủ 10 số
+       if not (new_phone.isdigit() and new_phone.startswith("0") and len(new_phone) == 10):
+          print("❌ SĐT NCC không hợp lệ (phải bắt đầu bằng 0 và đủ 10 số)")
+          return
+       s["phone"] = new_phone
+
+    if new_addr:
+       s["address"] = new_addr
+
+    p["supplier"] = s
+
+
+    # lưu số lượng cũ
+    old_items = {i["book_id"]: i["qty"] for i in p["items"]}
+
+    new_items = {}
+
+    # ===== NHẬP LẠI SỐ LƯỢNG =====
+    for i in p["items"]:
+       bid = i["book_id"]
+       b = books.get(bid, {})
+       old_qty = i["qty"]
+
+       print(f"\n📘 {bid} - {b.get('name','')}")
+       print(f"   SL cũ: {old_qty}")
+       raw = input("   SL mới (Enter = giữ nguyên): ").strip()
+
+       if raw == "":
+          new_qty = old_qty
+       else:
+          try:
+            new_qty = int(raw)
+            if new_qty < 0:
+               raise ValueError
+          except:
+             print("❌ Số lượng không hợp lệ")
+             return
+
+       new_items[bid] = new_qty
+
+
+    
+
+    new_items[bid] = new_qty
+
+ 
+
+
+    # ===== KIỂM TRA KHO TRƯỚC KHI ÁP DỤNG =====
+    for bid in old_items:
+        diff = new_items[bid] - old_items[bid]
+
+        # nếu giảm SL mà kho không đủ → cấm
+        if diff < 0:
+            if bid not in books or books[bid]["qty"] < abs(diff):
+                print("❌ Không thể chỉnh sửa – tồn kho không đủ")
+                print(f"   Sách {bid}: kho hiện tại {books.get(bid,{}).get('qty',0)}")
+                return
+
+    # ===== ÁP DỤNG ĐIỀU CHỈNH KHO =====
+    for bid in old_items:
+        diff = new_items[bid] - old_items[bid]
+        books[bid]["qty"] += diff
+
+    # ===== CẬP NHẬT PHIẾU =====
+    for i in p["items"]:
+        bid = i["book_id"]
+        i["qty"] = new_items[bid]
+        i["subtotal"] = i["qty"] * i["price"]
+
+    p["total"] = sum(i["subtotal"] for i in p["items"])
+
+    save_imports(imports)
+    SACH.save_books(books)
+
+    print("✅ Đã chỉnh sửa phiếu nhập & cập nhật tồn kho thành công")
+
+
 
 # ==========================================
 # THỐNG KÊ NHẬP HÀNG THEO THÁNG + NHÀ CUNG CẤP
