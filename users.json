@@ -1,0 +1,29 @@
+[
+    {
+        "fullname": "Administrator",
+        "email": "admin@gmail.com",
+        "phone": "0000000000",
+        "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+        "role": "admin",
+        "locked": false,
+        "login_fail": 0
+    },
+    {
+        "fullname": "Lê Thị A",
+        "email": "a@gmail.com",
+        "phone": "0987654321",
+        "password": "62080f96a2bfc48794326c5b9750942d15886e6a9746fc215cd0d04127196db2",
+        "role": "user",
+        "locked": false,
+        "login_fail": 0
+    },
+    {
+        "fullname": "Hoàng B",
+        "email": "B@gmail.com",
+        "phone": "0987654323",
+        "password": "e3601389438bf6dfba9a70bc2ba426d32f73cc452d0ea644906966009a868819",
+        "role": "user",
+        "locked": false,
+        "login_fail": 0
+    }
+]
