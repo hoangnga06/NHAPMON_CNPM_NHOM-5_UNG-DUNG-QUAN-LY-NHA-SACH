@@ -234,7 +234,42 @@ def view_imports():
 # XEM CHI TIẾT
 # ======================
 def view_import_detail():
-    pass
+    pid = input("Nhập mã phiếu: ")
+    imports = load_imports()
+    books = SACH.load_books()
+
+    p = next((x for x in imports if x["import_id"] == pid), None)
+    if not p:
+        print("❌ Không tìm thấy")
+        return
+    s = p.get("supplier",{})
+    print(f"\n PHIẾU {pid}")
+    print(f" NCC: {s.get('name','')}")
+    print(f" SĐT: {s.get('phone','')}")
+    print(f" Địa chỉ: {s.get('address','')}")
+    print(f" Ngày nhập: {p['created_at']}")
+    print("-" * 90)
+
+
+    print("{:<8} {:<25} {:<15} {:<12} {:<8} {:<12}".format(
+        "Mã", "Tên sách", "Thể loại", "Giá nhập", "SL", "Thành tiền"
+    ))
+    print("-" * 90)
+    for i in p["items"]:
+        bid = i["book_id"]
+        b = books.get(bid, {})
+
+        print("{:<8} {:<25} {:<15} {:<12} {:<8} {:<12}".format(
+            bid,
+            b.get("name", "❓"),
+            b.get("category", ""),
+            f"{i['price']:,}",
+            i["qty"],
+            f"{i['subtotal']:,}"
+        ))
+
+    print("-" * 90)
+    print(f"💰 TỔNG TIỀN: {p['total']:,}đ")
 # ======================
 # CHỈNH SỬA PHIẾU 
 # ======================
