@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "time": "30/12/2025 03:02",
+        "staff": "D@gmail.com",
+        "customer": {
+            "id": "1",
+            "name": "Nga",
+            "phone": "0987654567",
+            "address": "Huế"
+        },
+        "items": [
+            {
+                "name": "Conan tập dài",
+                "price": 22000.0,
+                "qty": 1
+            },
+            {
+                "name": "Lịch sử Việt Nam",
+                "price": 30000.0,
+                "qty": 1
+            }
+        ],
+        "total": 52000.0,
+        "discount": 0.0,
+        "pay": 52000.0
+    }
+]

@@ -4,7 +4,7 @@
         "author": "Nguyễn A",
         "category": "Lịch sử",
         "price": 30000.0,
-        "qty": 20
+        "qty": 19
     },
     "a001": {
         "name": "Văn học Việt Nam",
@@ -32,7 +32,7 @@
         "author": "Trần A",
         "category": "Truyện",
         "price": 22000.0,
-        "qty": 50
+        "qty": 49
     },
     "a005": {
         "name": "Conan tập ngắn",
