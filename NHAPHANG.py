@@ -110,6 +110,101 @@ def create_import(admin_email):
         "items": [],
         "total": 0
     }
+    # ===== THÊM SÁCH =====
+    while True:
+      print("\n➕ THÊM SÁCH VÀO PHIẾU")
+
+      keyword = input("Nhập tên sách: ").strip()
+      if not keyword:
+        print("❌ Tên sách không được để trống")
+        continue
+
+      matches = search_books_by_name(books, keyword)
+      book_id = None
+
+      # --- CÓ SÁCH TƯƠNG TỰ ---
+      if matches:
+        selected = choose_existing_book(matches)
+
+        if selected == "INVALID":
+            continue
+        elif selected:
+            book_id = selected
+
+      # --- THÊM SÁCH MỚI ---
+      if not book_id:
+        book_id = SACH.generate_next_book_id(books)
+        print(f"🆔 Mã sách tự động: {book_id}")
+
+        book_name = input("Tên sách đầy đủ (*): ").strip()
+        if not book_name:
+            print("❌ Tên sách không được để trống")
+            continue
+
+        author = input("Tác giả: ").strip()
+        category = input("Thể loại: ").strip()
+
+        try:
+            price_sell = float(input("Giá bán (*): "))
+            if price_sell <= 0:
+                raise ValueError
+        except:
+            print("❌ Giá bán không hợp lệ")
+            continue
+
+        books[book_id] = {
+            "name": book_name,
+            "author": author,
+            "category": category,
+            "price": price_sell,
+            "qty": 0
+        }
+
+      b = books[book_id]
+      print(f"\n📘 ĐANG NHẬP: {b['name']} [{book_id}]")
+
+      # --- THÔNG TIN NHẬP ---
+      try:
+        qty = int(input("Số lượng nhập: "))
+        price = float(input("Giá nhập: "))
+        if qty <= 0 or price <= 0:
+            raise ValueError
+      except:
+        print("❌ Số lượng hoặc giá không hợp lệ")
+        continue
+
+      found = False
+      for item in phieu["items"]:
+        if item["book_id"] == book_id:
+            item["qty"] += qty
+            item["subtotal"] += qty * price
+            found = True
+            break
+
+      if not found:
+        phieu["items"].append({
+            "book_id": book_id,
+            "qty": qty,
+            "price": price,
+            "subtotal": qty * price
+        })
+
+      phieu["total"] += qty * price
+      books[book_id]["qty"] += qty
+
+      if input("Thêm sách khác? (y/n): ").lower() != "y":
+        break
+
+
+    if not phieu["items"]:
+        print("❌ Phiếu nhập không có sách – huỷ tạo")
+        return
+
+    imports.append(phieu)
+    save_imports(imports)
+    SACH.save_books(books)
+
+    print(f"✅ Đã tạo phiếu nhập {import_id}")                                  
 # ======================
 # XEM DANH SÁCH TQ
 # ======================
@@ -131,7 +226,53 @@ def edit_import():
 # THỐNG KÊ NHẬP HÀNG THEO THÁNG + NHÀ CUNG CẤP
 # ==========================================
 def stat_by_month():
-    pass
+    imports = load_imports()
+
+    if not imports:
+        print("📭 Chưa có dữ liệu nhập hàng")
+        return
+
+    stats = {}
+
+    for p in imports:
+        month = p["created_at"][:7]   # YYYY-MM
+        s = p.get("supplier", {})
+        sname = s.get("name", "❓")
+
+        if month not in stats:
+            stats[month] = {}
+
+        if sname not in stats[month]:
+            stats[month][sname] = {
+                "count": 0,
+                "total": 0
+            }
+
+        stats[month][sname]["count"] += 1
+        stats[month][sname]["total"] += p["total"]
+
+    print("\n📊 THỐNG KÊ NHẬP HÀNG THEO THÁNG + NCC")
+
+    for month in sorted(stats.keys()):
+        print(f"\n📅 Tháng: {month}")
+        print("-" * 60)
+        print("{:<25} {:<10} {:>15}".format(
+            "Nhà cung cấp", "Số phiếu", "Tổng tiền"
+        ))
+        print("-" * 60)
+
+        month_total = 0
+
+        for sname, v in stats[month].items():
+            print("{:<25} {:<10} {:>15}".format(
+                sname,
+                v["count"],
+                f"{v['total']:,}đ"
+            ))
+            month_total += v["total"]
+
+        print("-" * 60)
+        print(f"➡️ TỔNG THÁNG {month}: {month_total:,}đ")
 
 # ======================
 # MENU
